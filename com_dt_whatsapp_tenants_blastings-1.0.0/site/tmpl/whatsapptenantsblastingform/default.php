@@ -509,7 +509,7 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 					var template = $('#jform_template_id option:selected').text();
 					var mode = $('#jform_mode').val();
 					var scheduledTime = $('#schedule_time_picker').val();
-					var contactCount = contacts.length;
+					var contactCount = selectedContacts.length;
 					var formattedTime = new Date(scheduledTime).toLocaleString('en-US', {
 						month: 'long',
 						day: 'numeric',
