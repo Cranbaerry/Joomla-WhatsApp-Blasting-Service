@@ -90,7 +90,7 @@ class WhatsapptenantscontactsModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState('a.id', 'ASC');
+		parent::populateState('a.id', 'DESC');
 
 		$app = Factory::getApplication();
 		$list = $app->getUserState($this->context . '.list');
@@ -104,7 +104,7 @@ class WhatsapptenantscontactsModel extends ListModel
 		$this->setState('list.start', $value);
 
 		$ordering  = $this->getUserStateFromRequest($this->context .'.filter_order', 'filter_order', 'a.id');
-		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', 'ASC'));
+		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', 'DESC'));
 		
 		if(!empty($ordering) || !empty($direction))
 		{
@@ -202,7 +202,7 @@ class WhatsapptenantscontactsModel extends ListModel
 			
 			// Add the list ordering clause.
 			$orderCol  = $this->state->get('list.ordering', 'a.id');
-			$orderDirn = $this->state->get('list.direction', 'ASC');
+			$orderDirn = $this->state->get('list.direction', 'DESC');
 
 			if ($orderCol && $orderDirn)
 			{
