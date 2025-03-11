@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `#__dt_whatsapp_tenants_templates` (
 `created_by` INT(11)  NULL  DEFAULT 0,
 `header_media_handle` VARCHAR(255)  NULL  DEFAULT "",
 `modified_by` INT(11)  NULL  DEFAULT 0,
-`status` VARCHAR(255)  NULL  DEFAULT "",
+`status` VARCHAR(255)  NULL  DEFAULT "APPROVED",
 `template_id` VARCHAR(255)  NULL  DEFAULT "",
 `name` VARCHAR(255)  NOT NULL ,
 `language` VARCHAR(255)  NOT NULL  DEFAULT "en_US",

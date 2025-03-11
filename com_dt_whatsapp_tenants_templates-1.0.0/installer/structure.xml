@@ -17,7 +17,7 @@
     <field action="change" old_name="content" new_name="body" field_name="body" field_type="TEXT" description=""/>
     <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
     <field field_name="footer" field_type="VARCHAR" field_length="255" description=""/>
-    <field field_name="status" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="status" field_type="VARCHAR" field_length="255" description=""/>
     <field field_name="template_id" field_type="VARCHAR" field_length="255" description=""/>
   </table>
 </component>

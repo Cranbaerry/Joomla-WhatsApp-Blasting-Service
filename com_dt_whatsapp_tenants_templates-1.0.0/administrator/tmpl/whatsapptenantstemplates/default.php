@@ -68,9 +68,6 @@ if (!empty($saveOrder))
 					<?php endif; ?>
 
 						
-					<th  scope="col" class="w-1 text-center">
-						<?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
-					</th>
 						
 						<th class='left'>
 							<?php echo HTMLHelper::_('searchtools.sort',  'COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_NAME', 'a.name', $listDirn, $listOrder); ?>
@@ -145,9 +142,6 @@ if (!empty($saveOrder))
 							<?php endif; ?>
 
 							
-							<td class="text-center">
-								<?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'whatsapptenantstemplates.', $canChange, 'cb'); ?>
-							</td>
 							
 							<td>
 								<?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>

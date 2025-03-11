@@ -106,6 +106,27 @@ class WhatsapptenantstemplateTable extends Table implements VersionableTableInte
 			$array['modified_by'] = Factory::getUser()->id;
 		}
 
+		// Support for multiple field: status
+		if (isset($array['status']))
+		{
+			if (is_array($array['status']))
+			{
+				$array['status'] = implode(',',$array['status']);
+			}
+			elseif (strpos($array['status'], ',') != false)
+			{
+				$array['status'] = explode(',',$array['status']);
+			}
+			elseif (strlen($array['status']) == 0)
+			{
+				$array['status'] = '';
+			}
+		}
+		else
+		{
+			$array['status'] = '';
+		}
+
 		// Support for multiple field: language
 		if (isset($array['language']))
 		{

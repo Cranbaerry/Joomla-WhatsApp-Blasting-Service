@@ -156,7 +156,6 @@ class HtmlView extends BaseHtmlView
 	{
 		return array(
 			'a.`id`' => Text::_('JGRID_HEADING_ID'),
-			'a.`state`' => Text::_('JSTATUS'),
 			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
 			'a.`status`' => Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_STATUS'),
 			'a.`name`' => Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_NAME'),

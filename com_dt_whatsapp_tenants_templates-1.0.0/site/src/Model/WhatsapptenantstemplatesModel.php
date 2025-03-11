@@ -194,10 +194,16 @@ class WhatsapptenantstemplatesModel extends ListModel
 				else
 				{
 					$search = $db->Quote('%' . $db->escape($search, true) . '%');
-					$query->where('( a.status LIKE ' . $search . '  OR  a.name LIKE ' . $search . '  OR  a.body LIKE ' . $search . ' )');
+					$query->where('( a.name LIKE ' . $search . '  OR  a.body LIKE ' . $search . ' )');
 				}
 			}
 			
+
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+		if ($filter_status != '') {
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
+		}
 
 		// Filtering language
 		$filter_language = $this->state->get("filter.language");
@@ -236,6 +242,11 @@ class WhatsapptenantstemplatesModel extends ListModel
 		
 		foreach ($items as $item)
 		{
+
+				if (!empty($item->status))
+					{
+						$item->status = Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$item->status))));
+					}
 
 				if (!empty($item->language))
 					{

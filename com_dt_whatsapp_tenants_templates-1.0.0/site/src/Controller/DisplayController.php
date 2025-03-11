@@ -56,7 +56,7 @@ class DisplayController extends \Joomla\CMS\MVC\Controller\BaseController
 		$view = $this->input->getCmd('view', 'whatsapptenantstemplates');
 		$view = $view == "featured" ? 'whatsapptenantstemplates' : $view;
 		$this->input->set('view', $view);
-
+		
 
 		parent::display($cachable, $urlparams);
 		return $this;

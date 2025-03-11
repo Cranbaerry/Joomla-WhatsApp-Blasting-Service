@@ -153,7 +153,7 @@ class WhatsapptenantstemplatesModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState('id', 'ASC');
+		parent::populateState('id', 'DESC');
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -264,6 +264,14 @@ class WhatsapptenantstemplatesModel extends ListModel
 		}
 		
 
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+
+		if ($filter_status !== null && (is_numeric($filter_status) || !empty($filter_status)))
+		{
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
+		}
+
 		// Filtering language
 		$filter_language = $this->state->get("filter.language");
 
@@ -281,7 +289,7 @@ class WhatsapptenantstemplatesModel extends ListModel
 		}
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
-		$orderDirn = $this->state->get('list.direction', 'ASC');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
 
 		if ($orderCol && $orderDirn)
 		{
@@ -302,6 +310,7 @@ class WhatsapptenantstemplatesModel extends ListModel
 		
 		foreach ($items as $oneItem)
 		{
+					$oneItem->status = !empty($oneItem->status) ? Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->status)))) : '';
 					$oneItem->language = !empty($oneItem->language) ? Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->language)))) : '';
 					$oneItem->category = !empty($oneItem->category) ? Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->category)))) : '';
 					$oneItem->header_type = !empty($oneItem->header_type) ? Text::_('COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_HEADER_TYPE_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->header_type)))) : '';
