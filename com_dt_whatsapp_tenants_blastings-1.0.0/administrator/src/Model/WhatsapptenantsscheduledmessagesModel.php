@@ -271,6 +271,14 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 		}
 		
 
+		// Filtering type
+		$filter_type = $this->state->get("filter.type");
+
+		if ($filter_type !== null && (is_numeric($filter_type) || !empty($filter_type)))
+		{
+			$query->where("a.`type` = '".$db->escape($filter_type)."'");
+		}
+
 		// Filtering template_id
 		$filter_template_id = $this->state->get("filter.template_id");
 

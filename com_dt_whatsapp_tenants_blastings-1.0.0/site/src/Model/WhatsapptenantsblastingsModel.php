@@ -201,14 +201,6 @@ class WhatsapptenantsblastingsModel extends ListModel
 			$query->where("a.`status` = '".$db->escape($filter_status)."'");
 		}
 
-		// Filtering template_id
-		$filter_template_id = $this->state->get("filter.template_id");
-
-		if ($filter_template_id)
-		{
-			$query->where("a.`template_id` = '".$db->escape($filter_template_id)."'");
-		}
-
 		// Filtering mode
 		$filter_mode = $this->state->get("filter.mode");
 		if ($filter_mode != '') {
