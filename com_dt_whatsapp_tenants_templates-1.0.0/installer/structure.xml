@@ -13,7 +13,7 @@
     <field action="change" old_name="media" new_name="header_media" field_name="header_media" field_type="TEXT" description=""/>
     <field field_name="checked_out_time" field_type="DATETIME" description=""/>
     <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
-    <field field_name="header_media_handle" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="header_media_handle" field_type="TEXT" description=""/>
     <field action="change" old_name="content" new_name="body" field_name="body" field_type="TEXT" description=""/>
     <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
     <field field_name="footer" field_type="VARCHAR" field_length="255" description=""/>

@@ -26,23 +26,23 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
     protected $autoloadLanguage = true;
 
     // Blasting statuses.
-    const BLASTING_STATUS_QUEUED      = 'QUEUED';
-    const BLASTING_STATUS_PROCESSING  = 'PROCESSING';
-    const BLASTING_STATUS_FAILED      = 'FAILED';
-    const BLASTING_STATUS_FINISHED    = 'FINISHED';
+    const BLASTING_STATUS_QUEUED = 'QUEUED';
+    const BLASTING_STATUS_PROCESSING = 'PROCESSING';
+    const BLASTING_STATUS_FAILED = 'FAILED';
+    const BLASTING_STATUS_FINISHED = 'FINISHED';
 
     // Scheduled messages statuses.
-    const SCHEDULED_STATUS_QUEUED     = 'QUEUED';
+    const SCHEDULED_STATUS_QUEUED = 'QUEUED';
     const SCHEDULED_STATUS_PROCESSING = 'PROCESSING';
-    const SCHEDULED_STATUS_DELIVERED  = 'DELIVERED';
-    const SCHEDULED_STATUS_FAILED     = 'FAILED';
-    const SCHEDULED_STATUS_CANCELED   = 'CANCELED';
+    const SCHEDULED_STATUS_DELIVERED = 'DELIVERED';
+    const SCHEDULED_STATUS_FAILED = 'FAILED';
+    const SCHEDULED_STATUS_CANCELED = 'CANCELED';
 
     protected const TASKS_MAP = [
         'plg_task_whatsappblast' => [
             'langConstPrefix' => 'PLG_TASK_WHATSAPPBLAST_TASK',
-            'method'          => 'doWhatsAppBlast',
-            'form'            => 'whatsappservice_form',
+            'method' => 'doWhatsAppBlast',
+            'form' => 'whatsappservice_form',
         ],
     ];
 
@@ -54,8 +54,8 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'onTaskOptionsList'    => 'advertiseRoutines',
-            'onExecuteTask'        => 'standardRoutineHandler',
+            'onTaskOptionsList' => 'advertiseRoutines',
+            'onExecuteTask' => 'standardRoutineHandler',
             'onContentPrepareForm' => 'enhanceTaskItemForm',
         ];
     }
@@ -84,7 +84,7 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
     private function doWhatsAppBlast(ExecuteTaskEvent $event): int
     {
         $maxMPS = (int) $this->params->get('max_mps', 80);
-        $count  = ['success' => 0, 'failed' => 0];
+        $count = ['success' => 0, 'failed' => 0];
         $this->logTask('WhatsApp blast task started.', 'info');
 
         try {
@@ -94,7 +94,7 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
 
                 // Gather blasting record IDs (if any) and scheduled message IDs.
                 $blastingIds = [];
-                $messageIds  = [];
+                $messageIds = [];
 
                 foreach ($messages as $message) {
                     // Scheduled message ID remains in $message->id.
@@ -304,7 +304,14 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 return $db->quote($id);
             }, $templateIds);
             $query = $db->getQuery(true)
-                ->select([$db->quoteName('id'), $db->quoteName('language'), $db->quoteName('name')], $db->quoteName('header_media_handle'))
+                ->select([
+                    $db->quoteName('id'),
+                    $db->quoteName('language'),
+                    $db->quoteName('name'),
+                    $db->quoteName('header_media'),
+                    $db->quoteName('header_type'),
+
+                ])
                 ->from($db->quoteName('#__dt_whatsapp_tenants_templates'))
                 ->where($db->quoteName('id') . ' IN (' . implode(',', $quotedTemplateIds) . ')');
             $db->setQuery($query);
@@ -316,8 +323,11 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 $message->template_name = isset($templateRows[$message->template_id])
                     ? $templateRows[$message->template_id]->name
                     : 'UNDEFINED_NAME';
-                $message->header_media_handle = isset($templateRows[$message->template_id])
-                    ? $templateRows[$message->template_id]->header_media_handle
+                $message->header_media = isset($templateRows[$message->template_id])
+                    ? $templateRows[$message->template_id]->header_media
+                    : null;
+                $message->header_type = isset($templateRows[$message->template_id])
+                    ? $templateRows[$message->template_id]->header_type
                     : null;
             }
             $this->logTask('Loaded template languages for templates: ' . implode(',', $templateIds), 'info');
@@ -354,12 +364,12 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 $url = 'https://graph.facebook.com/v22.0/' . $message->config->phone_number_id . '/messages';
                 $data = [
                     "messaging_product" => "whatsapp",
-                    "recipient_type"    => "individual",
-                    "to"                => $message->target_phone_number,
-                    "type"              => "text",
-                    "text"              => [
+                    "recipient_type" => "individual",
+                    "to" => $message->target_phone_number,
+                    "type" => "text",
+                    "text" => [
                         "preview_url" => true,
-                        "body"        => $message->keyword_message
+                        "body" => $message->keyword_message
                     ]
                 ];
             } else {
@@ -368,24 +378,25 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 $url = 'https://graph.facebook.com/v13.0/' . $message->config->phone_number_id . '/messages';
                 $data = [
                     "messaging_product" => "whatsapp",
-                    "recipient_type"    => "individual",
-                    "to"                => $message->target_phone_number,
-                    "type"              => "template",
-                    "template"          => [
-                        "name"     => $message->template_name,
+                    "recipient_type" => "individual",
+                    "to" => $message->target_phone_number,
+                    "type" => "template",
+                    "template" => [
+                        "name" => $message->template_name,
                         "language" => [
                             "code" => $message->language ?? 'en_US'
                         ]
                     ]
                 ];
-
-                if ($message->type !== 'TEXT') {
+                if ($message->header_type !== 'TEXT') {
                     $data['template']['components'][] = [
                         "type" => "header",
                         "parameters" => [
-                            "type" => "image",
-                            "image" => [
-                                "id" => $message->header_media_handle
+                            [
+                                "type" => "image",
+                                "image" => [
+                                    "link" => 'http://' . getenv('CRON_DOMAIN') . '/uploads/' . $message->created_by . '/' . $message->header_media
+                                ]
                             ]
                         ]
                     ];
@@ -393,6 +404,7 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
             }
 
             $jsonData = json_encode($data);
+
             $this->logTask('Payload for scheduled message ID ' . $message->id . ': ' . $jsonData, 'info');
 
             $ch = curl_init();
@@ -419,6 +431,8 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
             $this->logTask('HTTP Code: ' . $httpCode . ' for scheduled message ID ' . $message->id, 'info');
 
             if ($httpCode >= 200 && $httpCode < 300) {
+                // TODO: Update status via Webhook
+                // Sample data {"messaging_product":"whatsapp","metadata":{"display_phone_number":"60149270944","phone_number_id":"521270897737248"},"statuses":[{"id":"wamid.HBgNNjI4Nzc2NjI1MDE1OBUCABEYEkQ4ODU5ODYxMEU3RkY4NkNCMwA=","status":"sent","timestamp":"1741705563","recipient_id":"6287766250158","conversation":{"id":"013ad01df92652f301071f731a656fe3","expiration_timestamp":"1741781820","origin":{"type":"marketing"}},"pricing":{"billable":true,"pricing_model":"CBP","category":"marketing"}}]}
                 $this->logTask('Message sent via Cloud API for scheduled message ID ' . $message->id . '. Response: ' . $response, 'info');
                 $db = Factory::getDbo();
                 $query = $db->getQuery(true)

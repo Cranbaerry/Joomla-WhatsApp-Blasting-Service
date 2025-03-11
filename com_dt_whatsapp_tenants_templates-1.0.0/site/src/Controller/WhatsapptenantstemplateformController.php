@@ -180,6 +180,7 @@ class WhatsapptenantstemplateformController extends FormController
 				if (empty($files['header_media']['name'])) {
 					// No new file uploaded, so get the existing file from the database.
 					$filePath = JPATH_ROOT . '/uploads/' . $user_id . '/' . $template->header_media;
+;
 					if (!file_exists($filePath)) {
 						throw new Exception("Existing file not found");
 					}
