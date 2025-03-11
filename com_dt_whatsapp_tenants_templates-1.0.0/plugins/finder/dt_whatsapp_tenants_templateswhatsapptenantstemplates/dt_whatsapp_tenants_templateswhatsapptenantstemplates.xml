@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="4.0" type="plugin" group="finder">
+    <name>plg_finder_dt_whatsapp_tenants_templateswhatsapptenantstemplates</name>
+    <author>dreamztech</author>
+    <creationDate>2025-03-02</creationDate>
+    <copyright>2025 dreamztech</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>support@dreamztech.com.my</authorEmail>
+    <authorUrl>http://</authorUrl>
+    <version>CVS: 1.0.0</version>
+    <description>PLG_FINDER_COM_DT_WHATSAPP_TENANTS_TEMPLATES_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="dt_whatsapp_tenants_templateswhatsapptenantstemplates">dt_whatsapp_tenants_templateswhatsapptenantstemplates.php</filename>
+        <filename>index.html</filename>
+    </files>
+    <languages folder="languages">
+        
+			<language tag="en-GB">en-GB/plg_finder_dt_whatsapp_tenants_templateswhatsapptenantstemplates.ini</language>
+			<language tag="en-GB">en-GB/plg_finder_dt_whatsapp_tenants_templateswhatsapptenantstemplates.sys.ini</language>
+    </languages>
+    <config>
+    </config>
+    <updateservers>
+        <server type="extension" priority="1" name="com_dt_whatsapp_tenants_templates">https://www.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NTYzNjItMjE0NTQz</server>
+    </updateservers>
+</extension>

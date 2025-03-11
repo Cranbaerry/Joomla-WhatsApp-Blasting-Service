@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<component>
+  <table action="add" table_name="#__dt_whatsapp_tenants_templates" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="name" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="change" field_name="language" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="category" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field field_name="header_type" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="header_text" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" old_name="media" new_name="header_media" field_name="header_media" field_type="TEXT" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="header_media_handle" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" old_name="content" new_name="body" field_name="body" field_type="TEXT" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="footer" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="status" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="template_id" field_type="VARCHAR" field_length="255" description=""/>
+  </table>
+</component>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" description="COM_DT_WHATSAPP_TENANTS_TEMPLATES_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+        <field name="state"
+							type="status"
+							label="COM_DT_WHATSAPP_TENANTS_TEMPLATES_FILTER_STATE"
+							description="COM_DT_WHATSAPP_TENANTS_TEMPLATES_FILTER_STATE_DESC"
+							onchange="this.form.submit();">
+							<option value="">JOPTION_SELECT_PUBLISHED</option>
+						</field>
+        <field name="language" label="COM_DT_WHATSAPP_TENANTS_TEMPLATES_FORM_LBL_WHATSAPPTENANTSTEMPLATE_LANGUAGE" type="list" onchange="this.form.submit();" default="COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_FILTER">
+  <option value="">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_FILTER</option>
+  <option value="en_US">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_EN_US</option>
+  <option value="ms_MY">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_MS_MY</option>
+  <option value="zh_CN">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_ZH_CN</option>
+  <option value="ta_IN">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_TA_IN</option>
+  <option value="en_ID">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_LANGUAGE_OPTION_EN_ID</option>
+</field>
+<field name="category" label="COM_DT_WHATSAPP_TENANTS_TEMPLATES_FORM_LBL_WHATSAPPTENANTSTEMPLATE_CATEGORY" type="list" onchange="this.form.submit();" default="COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_FILTER">
+  <option value="">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_FILTER</option>
+  <option value="UTILITY">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_OPTION_UTILITY</option>
+  <option value="MARKETING">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_OPTION_MARKETING</option>
+  <option value="AUTHENTICATION">COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_CATEGORY_OPTION_AUTHENTICATION</option>
+</field>
+
+
+    </fields>
+
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_DT_WHATSAPP_TENANTS_TEMPLATES_LIST_FULL_ORDERING"
+               description="COM_DT_WHATSAPP_TENANTS_TEMPLATES_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.id ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_ID_ASC</option><option value="a.id DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_ID_DESC</option><option value="a.state ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_STATE_ASC</option><option value="a.state DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_STATE_DESC</option><option value="a.ordering ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_ORDERING_ASC</option><option value="a.ordering DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_ORDERING_DESC</option><option value="a.status ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_STATUS_ASC</option><option value="a.status DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_STATUS_DESC</option><option value="a.name ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_NAME_ASC</option><option value="a.name DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_NAME_DESC</option><option value="a.language ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_LANGUAGE_ASC</option><option value="a.language DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_LANGUAGE_DESC</option><option value="a.category ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_CATEGORY_ASC</option><option value="a.category DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_CATEGORY_DESC</option><option value="a.header_type ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_HEADER_TYPE_ASC</option><option value="a.header_type DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_HEADER_TYPE_DESC</option><option value="a.body ASC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_BODY_ASC</option><option value="a.body DESC">COM_DT_WHATSAPP_TENANTS_TEMPLATES_BODY_DESC</option>
+
+        </field>
+
+       <field name="limit"
+               type="limitbox"
+               label="COM_DT_WHATSAPP_TENANTS_TEMPLATES_LIST_LIMIT"
+               description="COM_DT_WHATSAPP_TENANTS_TEMPLATES_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+
+</form>
