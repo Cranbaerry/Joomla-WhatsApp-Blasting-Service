@@ -58,11 +58,6 @@ $wa->useStyle('com_dt_whatsapp_tenants_templates.list');
 		<table class="table table-striped" id="whatsapptenantstemplateList">
 			<thead>
 				<tr>
-
-					<th class=''>
-						<?php echo HTMLHelper::_('grid.sort', 'COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_ID', 'a.id', $listDirn, $listOrder); ?>
-					</th>
-
 					<th class=''>
 						<?php echo HTMLHelper::_('grid.sort', 'COM_DT_WHATSAPP_TENANTS_TEMPLATES_WHATSAPPTENANTSTEMPLATES_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
@@ -113,9 +108,7 @@ $wa->useStyle('com_dt_whatsapp_tenants_templates.list');
 
 					<tr class="row<?php echo $i % 2; ?>">
 
-						<td>
-							<?php echo $item->id; ?>
-						</td>
+
 						<td>
 							<?php $canCheckin = Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_dt_whatsapp_tenants_templates.' . $item->id) || $item->checked_out == Factory::getApplication()->getIdentity()->id; ?>
 							<?php if ($canCheckin && $item->checked_out > 0): ?>
