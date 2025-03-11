@@ -92,10 +92,10 @@ class ForeignKeyField extends ListField
 
 		// Flag to identify if the fk_value hides the trashed items
 		$this->hideTrashed = (int) $this->getAttribute('hide_trashed', 0);
-		
+
 		// Flag to identify if the fk_value hides the unpublished items	
 		$this->hideUnpublished = (int) $this->getAttribute('hide_unpublished', 0);
-				
+
 		// Flag to identify if the fk_value hides the published items
 		$this->hidePublished = (int) $this->getAttribute('hide_published', 0);
 
@@ -112,33 +112,29 @@ class ForeignKeyField extends ListField
 		$this->translate = (bool) $this->getAttribute('translate');
 
 		// Initialize variables.
-		$html     = '';
+		$html = '';
 		$fk_value = '';
 
 		// Load all the field options
-		$db    = Factory::getContainer()->get('DatabaseDriver');
+		$db = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true);
 
 		// Support for multiple fields on fk_values
-		if ($this->value_multiple == 1)
-		{
+		if ($this->value_multiple == 1) {
 			// Get the fields for multiple value
 			$this->value_fields = (string) $this->getAttribute('value_field_multiple');
 			$this->value_fields = explode(',', $this->value_fields);
-			$this->separator    = (string) $this->getAttribute('separator');
+			$this->separator = (string) $this->getAttribute('separator');
 
 			$fk_value = ' CONCAT(';
 
-			foreach ($this->value_fields as $field)
-			{
+			foreach ($this->value_fields as $field) {
 				$fk_value .= $db->quoteName($field) . ', \'' . $this->separator . '\', ';
 			}
 
 			$fk_value = substr($fk_value, 0, -(strlen($this->separator) + 6));
 			$fk_value .= ') AS ' . $db->quoteName($this->value_field);
-		}
-		else
-		{
+		} else {
 			$fk_value = $db->quoteName($this->value_field);
 		}
 
@@ -151,42 +147,48 @@ class ForeignKeyField extends ListField
 			)
 			->from($this->table);
 
-		if ($this->hideTrashed)
-		{
+		if ($this->hideTrashed) {
 			$query->where($db->quoteName('state') . ' != -2');
 		}
 
-		if ($this->hideUnpublished)
-		{
+		if ($this->hideUnpublished) {
 			$query->where($db->quoteName('state') . ' != 0');
 		}
 
-		if ($this->hidePublished)
-		{
+		if ($this->hidePublished) {
 			$query->where($db->quoteName('state') . ' != 1');
 		}
 
-		if ($this->hideArchived)
-		{
+		if ($this->hideArchived) {
 			$query->where($db->quoteName('state') . ' != 2');
 		}
 
-		if ($this->fk_ordering)
-		{
+		if ($this->fk_ordering) {
 			$query->order($this->fk_ordering);
 		}
 
-		if($this->condition)
-		{
+		if ($this->condition) {
 			$query->where($this->condition);
 		}
 
 		// Only join on data that the user has created
-        $user = Factory::getApplication()->getIdentity();
-        if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups()))
-        {
-            $query->where("created_by = ".(int)$user->id);
-        }
+		$user = Factory::getApplication()->getIdentity();
+		if (!empty($user->id) && !in_array("8", $user->getAuthorisedGroups()) && !in_array("7", $user->getAuthorisedGroups())) {
+			$query->where("created_by = " . (int) $user->id);
+		}
+
+		// CUSTOM STUFF
+		$app = Factory::getApplication();
+		$input = $app->input;
+		$view = $input->getCmd('view', 'whatsapptenantstemplates');
+		$view = $view == "featured" ? 'whatsapptenantstemplates' : $view;
+
+		// Check if frontend and not admin
+		if ($app->isClient('site')) {
+			if ($view == 'whatsapptenantsblastingform') {
+			$query->where($db->quoteName('status') . ' = ' . $db->quote('APPROVED'));
+			}
+		}
 
 		return $query;
 	}
@@ -202,30 +204,26 @@ class ForeignKeyField extends ListField
 	{
 		$data = $this->getLayoutData();
 
-		if (!\is_array($this->value) && !empty($this->value))
-		{
-			if (\is_object($this->value))
-			{
+		if (!\is_array($this->value) && !empty($this->value)) {
+			if (\is_object($this->value)) {
 				$this->value = get_object_vars($this->value);
 			}
 
 			// String in format 2,5,4
-			if (\is_string($this->value))
-			{
+			if (\is_string($this->value)) {
 				$this->value = explode(',', $this->value);
 			}
 
 			// Integer is given
-			if (\is_int($this->value))
-			{
+			if (\is_int($this->value)) {
 				$this->value = array($this->value);
 			}
 
 			$data['value'] = $this->value;
 		}
 
-		$data['options']       = $this->getOptions();
-		
+		$data['options'] = $this->getOptions();
+
 		return $this->getRenderer($this->layout)->render($data);
 	}
 
@@ -239,37 +237,30 @@ class ForeignKeyField extends ListField
 	protected function getOptions()
 	{
 		$options = array();
-		$db      = Factory::getContainer()->get('DatabaseDriver');
-		try
-		{
+		$db = Factory::getContainer()->get('DatabaseDriver');
+		try {
 			$db->setQuery($this->processQuery());
 			$results = $db->loadObjectList();
-		}
-		catch (ExecutionFailureException $e)
-		{
+		} catch (ExecutionFailureException $e) {
 			Factory::getApplication()->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 		}
 
 		// Add header.
-		if (!empty($this->header))
-		{
+		if (!empty($this->header)) {
 			$options[] = (object) ["value" => '', "text" => Text::_($this->header)];
 		}
 
-		if(!empty($this->option_value_field) || !empty($this->option_key_field))
-		{
+		if (!empty($this->option_value_field) || !empty($this->option_key_field)) {
 			$options[] = (object) ["value" => $this->option_key_field, "text" => Text::_($this->option_value_field)];
 		}
 
 		// Build the field options.
-		if (!empty($results))
-		{
-			foreach ($results as $item)
-			{
+		if (!empty($results)) {
+			foreach ($results as $item) {
 				$options[] = (object) [
-									"value"     => $item->{$this->key_field},
-									"text"      => $this->translate == true ? Text::_($item->{$this->value_field}) : $item->{$this->value_field}
-								];
+					"value" => $item->{$this->key_field},
+					"text" => $this->translate == true ? Text::_($item->{$this->value_field}) : $item->{$this->value_field}
+				];
 			}
 		}
 
@@ -289,12 +280,9 @@ class ForeignKeyField extends ListField
 	 */
 	public function getAttribute($attr_name, $default = null)
 	{
-		if (!empty($this->element[$attr_name]))
-		{
+		if (!empty($this->element[$attr_name])) {
 			return $this->element[$attr_name];
-		}
-		else
-		{
+		} else {
 			return $default;
 		}
 	}
