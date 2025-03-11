@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_ITEM_VIEW_WHATSAPPTENANTSBLASTING" option="View">
+        <message>
+                        <![CDATA[COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_ITEM_VIEW_WHATSAPPTENANTSBLASTING_DESC]]>
+        </message>
+    </layout>
+    <fields name="request">
+        <fieldset 
+            name="request"
+            label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FIELDSET_ITEM_ID_SELECT_LABEL">
+            <field
+                name="id"
+                query="SELECT `id`, `status` FROM #__dt_whatsapp_tenants_blastings ORDER BY `id`"
+                type="sql"
+                key_field="id" 
+                value_field="status"
+                label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_ITEM_ID_SELECT_LABEL"
+                require="true"
+                description="JGLOBAL_SHOW_TITLE_DESC">
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

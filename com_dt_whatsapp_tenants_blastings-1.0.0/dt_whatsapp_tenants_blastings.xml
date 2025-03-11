@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="4.0" method="upgrade">
+    <name>com_dt_whatsapp_tenants_blastings</name>
+    <creationDate>2025-03-07</creationDate>
+    <copyright>2025 dreamztech</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <author>dreamztech</author>
+    <authorEmail>support@dreamztech.com.my</authorEmail>
+    <authorUrl>http://</authorUrl>
+    <version>CVS: 1.0.0</version>
+    <description></description>
+    <namespace path="src">Comdtwhatsapptenantsblastings\Component\Dt_whatsapp_tenants_blastings</namespace>
+    
+    <scriptfile>script.php</scriptfile>
+    
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <update> <!-- Runs on update -->
+        <schemas>
+            <schemapath type="mysql">sql/updates</schemapath>
+        </schemas>
+    </update>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    
+
+    <files folder="site">
+        <folder>src</folder>
+        <folder>forms</folder>
+        <folder>tmpl</folder>
+    </files>
+    <media destination="com_dt_whatsapp_tenants_blastings" folder="media">
+        <folder>css</folder>
+        <folder>js</folder>
+        <filename>joomla.asset.json</filename>
+    </media>
+    <languages folder="site/languages">
+        
+			<language tag="en-GB">en-GB/com_dt_whatsapp_tenants_blastings.ini</language>
+    </languages>
+    <administration>
+        <menu>COM_DT_WHATSAPP_TENANTS_BLASTINGS</menu>
+        <submenu>
+            
+			<menu link="option=com_dt_whatsapp_tenants_blastings&amp;view=whatsapptenantsblastings" view="whatsapptenantsblastings" alt="Dt_whatsapp_tenants_blastings/Whatsapptenantsblastings">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_WHATSAPPTENANTSBLASTINGS</menu>
+
+			<menu link="option=com_dt_whatsapp_tenants_blastings&amp;view=whatsapptenantscontacts" view="whatsapptenantscontacts" alt="Dt_whatsapp_tenants_blastings/Whatsapptenantscontacts">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_WHATSAPPTENANTSCONTACTS</menu>
+
+			<menu link="option=com_dt_whatsapp_tenants_blastings&amp;view=whatsapptenantsscheduledmessages" view="whatsapptenantsscheduledmessages" alt="Dt_whatsapp_tenants_blastings/Whatsapptenantsscheduledmessages">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_WHATSAPPTENANTSSCHEDULEDMESSAGES</menu>
+
+			<menu link="option=com_dt_whatsapp_tenants_blastings&amp;view=whatsapptenantsmessagehistories" view="whatsapptenantsmessagehistories" alt="Dt_whatsapp_tenants_blastings/Whatsapptenantsmessagehistories">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_WHATSAPPTENANTSMESSAGEHISTORIES</menu>
+
+			<menu link="option=com_dt_whatsapp_tenants_blastings&amp;view=whatsapptenantskeywords" view="whatsapptenantskeywords" alt="Dt_whatsapp_tenants_blastings/Whatsapptenantskeywords">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_WHATSAPPTENANTSKEYWORDS</menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <folder>forms</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <folder>services</folder>
+            <folder>presets</folder>
+            <folder>sql</folder>
+        </files>
+        <languages folder="administrator/languages">
+            
+			<language tag="en-GB">en-GB/com_dt_whatsapp_tenants_blastings.ini</language>
+			<language tag="en-GB">en-GB/com_dt_whatsapp_tenants_blastings.sys.ini</language>
+        </languages>
+    </administration>
+    <config>
+        <fields name="params">
+            <fieldset name="component">
+                <field name="save_history" default="0" />
+            </fieldset>
+        </fields>
+    </config>
+    <plugins>
+		<plugin group="finder" plugin="dt_whatsapp_tenants_blastingswhatsapptenantsblastings"/>
+		<plugin group="finder" plugin="dt_whatsapp_tenants_blastingswhatsapptenantscontacts"/>
+		<plugin group="finder" plugin="dt_whatsapp_tenants_blastingswhatsapptenantsscheduledmessages"/>
+		<plugin group="finder" plugin="dt_whatsapp_tenants_blastingswhatsapptenantsmessagehistories"/>
+		<plugin group="finder" plugin="dt_whatsapp_tenants_blastingswhatsapptenantskeywords"/>
+    </plugins>
+    
+
+    <updateservers>
+        <server type="extension" priority="1" name="com_dt_whatsapp_tenants_blastings">https://nocdn.component-creator.com/index.php?task=builder.preupdatecheckhook&amp;option=com_combuilder&amp;component=NTYzNjItMjE0NTYy</server>
+    </updateservers>
+</extension>
+<!-- Component built by the Joomla Component Creator -->
+<!-- http://www.component-creator.com/ -->

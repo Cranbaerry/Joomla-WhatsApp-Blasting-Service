@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="params">
+        <fieldset name="task_params">
+            <!-- Override the default max messages per second if needed -->
+            <field 
+                name="max_mps" 
+                type="number" 
+                default="80" 
+                label="Maximum Messages Per Second" 
+                description="Override the default maximum messages per second for this task." 
+            />
+        </fieldset>
+    </fields>
+</form>

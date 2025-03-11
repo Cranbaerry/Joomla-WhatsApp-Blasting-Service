@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension method="upgrade" type="plugin" group="ajax">
+    <name>Ajax - DT WhatsApp Web Hook</name>
+    <version>1.0</version>
+    <description>This plugin handles WhatsApp API webhook callbacks for message processing and integration.</description>
+    <author>Naufal</author>
+	<creationDate>Today</creationDate>
+    <namespace path="src">Joomla\Plugin\Ajax\WhatsAppWebhook</namespace>
+    <files>
+		<folder plugin="whatsappwebhook">services</folder>
+		<folder>src</folder>
+	</files>
+    <config>
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="verify_token" type="text" default="" label="Verify Token" description="Enter your webhook verification token." />
+        </fieldset>
+    </fields>
+</config>
+</extension>

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_dt_whatsapp_tenants_blastings",
+  "version": "CVS: 1.0.0",
+  "license": "GNU General Public License version 2 or later; see LICENSE.txt",
+  "assets": [
+    {
+      "name": "com_dt_whatsapp_tenants_blastings.admin",
+      "type": "style",
+      "uri": "com_dt_whatsapp_tenants_blastings/admin.css"
+    },
+    {
+      "name": "com_dt_whatsapp_tenants_blastings.admin",
+      "type": "script",
+      "uri": "com_dt_whatsapp_tenants_blastings/admin.js",
+      "dependencies": [
+        "jquery"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+        "name": "com_dt_whatsapp_tenants_blastings.list",
+        "type": "style",
+        "uri": "com_dt_whatsapp_tenants_blastings/list.css"
+    }
+  ]
+}

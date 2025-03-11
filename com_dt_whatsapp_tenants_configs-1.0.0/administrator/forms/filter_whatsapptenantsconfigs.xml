@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" description="COM_DT_WHATSAPP_TENANTS_CONFIGS_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+        <field name="state"
+							type="status"
+							label="COM_DT_WHATSAPP_TENANTS_CONFIGS_FILTER_STATE"
+							description="COM_DT_WHATSAPP_TENANTS_CONFIGS_FILTER_STATE_DESC"
+							onchange="this.form.submit();">
+							<option value="">JOPTION_SELECT_PUBLISHED</option>
+						</field>
+        <field name="user_id" label="COM_DT_WHATSAPP_TENANTS_CONFIGS_FORM_LBL_WHATSAPPTENANTSCONFIG_USER_ID" type="sql" query="SELECT &quot;&quot; AS `id`, &quot;COM_DT_WHATSAPP_TENANTS_CONFIGS_WHATSAPPTENANTSCONFIGS_USER_ID_FILTER&quot; AS `name` UNION SELECT `id`, `name` FROM `#__users`" translate="true" key_field="id" value_field="name" onchange="this.form.submit();"/>
+<field name="dreamztrack_endpoint" label="COM_DT_WHATSAPP_TENANTS_CONFIGS_FORM_LBL_WHATSAPPTENANTSCONFIG_DREAMZTRACK_ENDPOINT" type="list" onchange="this.form.submit();" default="COM_DT_WHATSAPP_TENANTS_CONFIGS_WHATSAPPTENANTSCONFIGS_DREAMZTRACK_ENDPOINT_FILTER">
+  <option value="">COM_DT_WHATSAPP_TENANTS_CONFIGS_WHATSAPPTENANTSCONFIGS_DREAMZTRACK_ENDPOINT_FILTER</option>
+  <option value="DEVELOPMENT">COM_DT_WHATSAPP_TENANTS_CONFIGS_WHATSAPPTENANTSCONFIGS_DREAMZTRACK_ENDPOINT_OPTION_DEVELOPMENT</option>
+  <option value="PRODUCTION">COM_DT_WHATSAPP_TENANTS_CONFIGS_WHATSAPPTENANTSCONFIGS_DREAMZTRACK_ENDPOINT_OPTION_PRODUCTION</option>
+</field>
+
+
+    </fields>
+
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_DT_WHATSAPP_TENANTS_CONFIGS_LIST_FULL_ORDERING"
+               description="COM_DT_WHATSAPP_TENANTS_CONFIGS_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.id ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_ID_ASC</option><option value="a.id DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_ID_DESC</option><option value="a.ordering ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_ORDERING_ASC</option><option value="a.ordering DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_ORDERING_DESC</option><option value="a.callback_url ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_CALLBACK_URL_ASC</option><option value="a.callback_url DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_CALLBACK_URL_DESC</option><option value="a.forward_url ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_FORWARD_URL_ASC</option><option value="a.forward_url DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_FORWARD_URL_DESC</option><option value="a.app_id ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_APP_ID_ASC</option><option value="a.app_id DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_APP_ID_DESC</option><option value="a.phone_number_id ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_PHONE_NUMBER_ID_ASC</option><option value="a.phone_number_id DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_PHONE_NUMBER_ID_DESC</option><option value="a.business_account_id ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_BUSINESS_ACCOUNT_ID_ASC</option><option value="a.business_account_id DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_BUSINESS_ACCOUNT_ID_DESC</option><option value="a.token ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_TOKEN_ASC</option><option value="a.token DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_TOKEN_DESC</option><option value="a.phone_number ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_PHONE_NUMBER_ASC</option><option value="a.phone_number DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_PHONE_NUMBER_DESC</option><option value="a.user_id ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_USER_ID_ASC</option><option value="a.user_id DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_USER_ID_DESC</option><option value="a.dreamztrack_endpoint ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_ENDPOINT_ASC</option><option value="a.dreamztrack_endpoint DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_ENDPOINT_DESC</option><option value="a.dreamztrack_branch ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_BRANCH_ASC</option><option value="a.dreamztrack_branch DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_BRANCH_DESC</option><option value="a.dreamztrack_key ASC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_KEY_ASC</option><option value="a.dreamztrack_key DESC">COM_DT_WHATSAPP_TENANTS_CONFIGS_DREAMZTRACK_KEY_DESC</option>
+
+        </field>
+
+       <field name="limit"
+               type="limitbox"
+               label="COM_DT_WHATSAPP_TENANTS_CONFIGS_LIST_LIMIT"
+               description="COM_DT_WHATSAPP_TENANTS_CONFIGS_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+
+</form>

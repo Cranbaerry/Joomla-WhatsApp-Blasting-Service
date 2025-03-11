@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+
+        <field name="template_id" type="sql" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_TEMPLATE_ID" query="SELECT `id` AS `id`, `name` AS val FROM `#__dt_whatsapp_tenants_templates`" header="COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_TEMPLATE_ID_FILTER" key_field="id" value_field="val" class="inputbox" onchange="this.form.submit()" translate="true"/>
+<field name="mode" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_MODE" type="list" onchange="this.form.submit();" default="COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_FILTER">
+  <option value="">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_FILTER</option>
+  <option value="INSTANT">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_OPTION_INSTANT</option>
+  <option value="SCHEDULED">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_OPTION_SCHEDULED</option>
+</field>
+
+
+    </fields>
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_FULL_ORDERING"
+               description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.status ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_STATUS_ASC</option><option value="a.status DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_STATUS_DESC</option><option value="a.ordering ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_ORDERING_ASC</option><option value="a.ordering DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_ORDERING_DESC</option><option value="a.template_id ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TEMPLATE_ID_ASC</option><option value="a.template_id DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_TEMPLATE_ID_DESC</option><option value="a.mode ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_MODE_ASC</option><option value="a.mode DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_MODE_DESC</option><option value="a.scheduled_time ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_SCHEDULED_TIME_ASC</option><option value="a.scheduled_time DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_SCHEDULED_TIME_DESC</option>
+
+        </field>
+
+       <field name="limit"
+               type="limitbox"
+               label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_LIMIT"
+               description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+</form>

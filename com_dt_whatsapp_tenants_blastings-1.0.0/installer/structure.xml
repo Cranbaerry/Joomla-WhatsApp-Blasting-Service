@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<component>
+  <table action="add" table_name="#__dt_whatsapp_tenants_blastings" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field action="change" field_name="status" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="template_id" field_type="VARCHAR" default="0" field_length="255" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field action="change" field_name="mode" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field action="change" field_name="scheduled_time" field_type="DATETIME" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="remove" field_name="type"/>
+    <field action="remove" field_name="keyword_id"/>
+  </table>
+  <table action="add" table_name="#__dt_whatsapp_tenants_contacts" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" old_name="display_name" new_name="name" field_name="name" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="phone_number" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="keywords_tags" field_type="TEXT" description=""/>
+    <field action="change" old_name="lastupdated" new_name="last_updated" field_name="last_updated" field_type="DATETIME" description=""/>
+    <field action="remove" field_name="whatsappid"/>
+    <field action="remove" field_name="quality_rating"/>
+  </table>
+  <table action="add" table_name="#__dt_whatsapp_tenants_scheduled_messages" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field action="change" field_name="target_phone_number" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="type" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field field_name="template_id" field_type="VARCHAR" default="0" field_length="255" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field field_name="keyword_id" field_type="INT" default="0" field_length="11" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="keyword_message" field_type="TEXT" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="blasting_id" field_type="INT" default="0" field_length="11" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="status" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="raw_response" field_type="TEXT" description=""/>
+    <field field_name="scheduled_time" field_type="DATETIME" description=""/>
+  </table>
+  <table action="add" table_name="#__dt_whatsapp_tenants_message_history" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="from" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="phone_number_id" field_type="VARCHAR" default="0" field_length="255" description=""/>
+    <field field_name="timestamp" field_type="TIMESTAMP" description=""/>
+    <field field_name="text" field_type="TEXT" description=""/>
+    <field field_name="type" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="media_caption" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="errors" field_type="TEXT" description=""/>
+    <field field_name="raw_response" field_type="TEXT" description=""/>
+  </table>
+  <table action="add" table_name="#__dt_whatsapp_tenants_keywords" storage_engine="" collation="utf8mb4_unicode_ci">
+    <field field_name="name" field_type="VARCHAR" field_length="255" description=""/>
+    <field field_name="id" field_type="INT" field_length="11" is_autoincrement="1" index="primary" description=""/>
+    <field field_name="state" field_type="TINYINT" field_length="1" index="index" description=""/>
+    <field field_name="ordering" field_type="INT" field_length="11" default="0" index="index" description=""/>
+    <field field_name="checked_out" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="checked_out_time" field_type="DATETIME" description=""/>
+    <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
+    <field action="change" old_name="createddate" new_name="created_date" field_name="created_date" field_type="DATETIME" description=""/>
+    <field field_name="scheduled_message_json" field_type="TEXT" description=""/>
+  </table>
+</component>

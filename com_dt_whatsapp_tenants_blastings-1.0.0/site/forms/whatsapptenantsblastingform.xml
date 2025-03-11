@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addfieldprefix="Comdtwhatsapptenantsblastings\Component\Dt_whatsapp_tenants_blastings\Site\Field">
+  <fieldset>
+    <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
+    <field name="status" default="QUEUED" filter="safehtml" type="text" readonly="true" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_STATUS" hidden="true" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS"/>
+    <field name="state" default="1" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1">
+      <option value="1">JPUBLISHED</option>
+      <option value="0">JUNPUBLISHED</option>
+      <option value="2">JARCHIVED</option>
+      <option value="-2">JTRASHED</option>
+    </field>
+    <field name="ordering"/>
+    <field name="checked_out" type="hidden" filter="unset"/>
+    <field name="checked_out_time" type="hidden" filter="unset"/>
+    <field name="template_id" type="foreignkey" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_TEMPLATE_ID" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_TEMPLATE_ID" option_key_field="" option_value_field="- Select Template -" default="" input_type="list" table="#__dt_whatsapp_tenants_templates" key_field="id" translate="true" value_field="name"/>
+    <field name="mode" default="INSTANT" type="list" required="true" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_MODE" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_MODE" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_MODE">
+      <option value="INSTANT">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_OPTION_INSTANT</option>
+      <option value="SCHEDULED">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_MODE_OPTION_SCHEDULED</option>
+    </field>
+    <field name="scheduled_time" type="calendar" class="inputbox" format="%Y-%m-%d %H:%M:%S" showtime="true" translateformat="true" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_SCHEDULED_TIME" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_SCHEDULED_TIME" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_SCHEDULED_TIME" showon="mode:SCHEDULED"/>
+    <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/>
+  </fieldset>
+</form>

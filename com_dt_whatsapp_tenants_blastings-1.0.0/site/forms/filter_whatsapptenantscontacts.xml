@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+
+        <field name="keywords_tags" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSCONTACT_KEYWORDS_TAGS" type="sql" query="SELECT * FROM #__dt_whatsapp_tenants_keywords" header="COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSCONTACTS_KEYWORDS_TAGS_FILTER" translate="true" key_field="id" value_field="name" onchange="this.form.submit();"/>
+
+
+    </fields>
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_FULL_ORDERING"
+               description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.name ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_NAME_ASC</option><option value="a.name DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_NAME_DESC</option><option value="a.phone_number ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_PHONE_NUMBER_ASC</option><option value="a.phone_number DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_PHONE_NUMBER_DESC</option><option value="a.keywords_tags ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_KEYWORDS_TAGS_ASC</option><option value="a.keywords_tags DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_KEYWORDS_TAGS_DESC</option><option value="a.last_updated ASC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_LAST_UPDATED_ASC</option><option value="a.last_updated DESC">COM_DT_WHATSAPP_TENANTS_BLASTINGS_LAST_UPDATED_DESC</option>
+
+        </field>
+
+       <field name="limit"
+               type="limitbox"
+               label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_LIMIT"
+               description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+</form>

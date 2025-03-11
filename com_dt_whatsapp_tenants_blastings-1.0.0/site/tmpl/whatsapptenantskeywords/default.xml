@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_LIST_VIEW_WHATSAPPTENANTSKEYWORDS" option="View">
+        <message>
+                        <![CDATA[COM_DT_WHATSAPP_TENANTS_BLASTINGS_TITLE_LIST_VIEW_WHATSAPPTENANTSKEYWORDS_DESC]]>
+        </message>
+	</layout>
+	
+</metadata>

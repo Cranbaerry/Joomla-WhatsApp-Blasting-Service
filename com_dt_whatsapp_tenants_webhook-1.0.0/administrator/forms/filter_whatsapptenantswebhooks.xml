@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" description="COM_DT_WHATSAPP_TENANTS_WEBHOOK_SEARCH_FILTER_SUBMIT"
+               label="COM_USERS_FILTER_SEARCH_DESC"
+               class="js-stools-search-string" />
+        <field name="state"
+							type="status"
+							label="COM_DT_WHATSAPP_TENANTS_WEBHOOK_FILTER_STATE"
+							description="COM_DT_WHATSAPP_TENANTS_WEBHOOK_FILTER_STATE_DESC"
+							onchange="this.form.submit();">
+							<option value="">JOPTION_SELECT_PUBLISHED</option>
+						</field>
+        
+
+    </fields>
+
+    <fields name="list">
+
+        <field name="fullordering"
+               type="list"
+               label="COM_DT_WHATSAPP_TENANTS_WEBHOOK_LIST_FULL_ORDERING"
+               description="COM_DT_WHATSAPP_TENANTS_WEBHOOK_LIST_FULL_ORDERING_DESC"
+               onchange="this.form.submit();"
+               default="a.id DESC"
+        >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.id ASC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_ID_ASC</option><option value="a.id DESC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_ID_DESC</option><option value="a.field ASC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_FIELD_ASC</option><option value="a.field DESC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_FIELD_DESC</option><option value="a.value ASC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_VALUE_ASC</option><option value="a.value DESC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_VALUE_DESC</option><option value="a.status ASC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_STATUS_ASC</option><option value="a.status DESC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_STATUS_DESC</option><option value="a.detail ASC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_DETAIL_ASC</option><option value="a.detail DESC">COM_DT_WHATSAPP_TENANTS_WEBHOOK_DETAIL_DESC</option>
+
+        </field>
+
+       <field name="limit"
+               type="limitbox"
+               label="COM_DT_WHATSAPP_TENANTS_WEBHOOK_LIST_LIMIT"
+               description="COM_DT_WHATSAPP_TENANTS_WEBHOOK_LIST_LIMIT_DESC"
+               class="input-mini"
+               default="25"
+               onchange="this.form.submit();"
+        />
+
+    </fields>
+
+</form>

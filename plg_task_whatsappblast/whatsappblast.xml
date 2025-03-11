@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension version="4.2" type="plugin" group="task" method="upgrade">
+	<name>plg_task_whatsappblast</name>
+	<creationDate>2022-11-19</creationDate>
+	<author>Naufal</author>
+	<copyright>(C) 2022 Tobias Zulauf All rights reserved.</copyright>
+	<authorUrl>https://www.jah-tz.de</authorUrl>
+	<version>1.0.0</version>
+	<license>GNU/GPL Version 2 or later</license>
+	<description>PLG_TASK_WHATSAPPBLAST_XML_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
+	<namespace path="src">Joomla\Plugin\Task\WhatsAppBlast</namespace>
+	<files>
+		<folder>language</folder>
+		<folder plugin="whatsappblast">services</folder>
+		<folder>src</folder>
+		<folder>forms</folder>
+	</files>
+</extension>
