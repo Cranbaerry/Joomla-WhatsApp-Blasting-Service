@@ -245,6 +245,7 @@ class WhatsapptenantstemplateformController extends FormController
 
 				if ($jsonResponse && isset($jsonResponse->h)) {
 					$file_handle = $jsonResponse->h;
+					$data['header_media_handle'] = $file_handle;
 				}
 
 				curl_close($ch);

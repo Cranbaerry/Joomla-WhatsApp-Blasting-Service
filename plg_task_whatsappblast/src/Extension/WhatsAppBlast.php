@@ -304,7 +304,7 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 return $db->quote($id);
             }, $templateIds);
             $query = $db->getQuery(true)
-                ->select([$db->quoteName('id'), $db->quoteName('language'), $db->quoteName('name')])
+                ->select([$db->quoteName('id'), $db->quoteName('language'), $db->quoteName('name')], $db->quoteName('header_media_handle'))
                 ->from($db->quoteName('#__dt_whatsapp_tenants_templates'))
                 ->where($db->quoteName('id') . ' IN (' . implode(',', $quotedTemplateIds) . ')');
             $db->setQuery($query);
@@ -316,6 +316,9 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                 $message->template_name = isset($templateRows[$message->template_id])
                     ? $templateRows[$message->template_id]->name
                     : 'UNDEFINED_NAME';
+                $message->header_media_handle = isset($templateRows[$message->template_id])
+                    ? $templateRows[$message->template_id]->header_media_handle
+                    : null;
             }
             $this->logTask('Loaded template languages for templates: ' . implode(',', $templateIds), 'info');
         } else {
@@ -375,6 +378,18 @@ class WhatsAppBlast extends CMSPlugin implements SubscriberInterface
                         ]
                     ]
                 ];
+
+                if ($message->type !== 'TEXT') {
+                    $data['template']['components'][] = [
+                        "type" => "header",
+                        "parameters" => [
+                            "type" => "image",
+                            "image" => [
+                                "id" => $message->header_media_handle
+                            ]
+                        ]
+                    ];
+                }
             }
 
             $jsonData = json_encode($data);
