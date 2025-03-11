@@ -88,6 +88,27 @@ class WhatsapptenantsblastingTable extends Table implements VersionableTableInte
 		$task = Factory::getApplication()->input->get('task');
 		$user = Factory::getApplication()->getIdentity();
 		
+
+		// Support for multiple field: status
+		if (isset($array['status']))
+		{
+			if (is_array($array['status']))
+			{
+				$array['status'] = implode(',',$array['status']);
+			}
+			elseif (strpos($array['status'], ',') != false)
+			{
+				$array['status'] = explode(',',$array['status']);
+			}
+			elseif (strlen($array['status']) == 0)
+			{
+				$array['status'] = '';
+			}
+		}
+		else
+		{
+			$array['status'] = '';
+		}
 		$input = Factory::getApplication()->input;
 		$task = $input->getString('task', '');
 

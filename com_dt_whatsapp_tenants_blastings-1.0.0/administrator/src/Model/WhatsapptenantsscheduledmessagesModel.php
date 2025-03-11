@@ -151,7 +151,7 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState('id', 'ASC');
+		parent::populateState('id', 'DESC');
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -286,9 +286,17 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 		{
 			$query->where("a.`blasting_id` = '".$db->escape($filter_blasting_id)."'");
 		}
+
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+
+		if ($filter_status !== null && (is_numeric($filter_status) || !empty($filter_status)))
+		{
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
+		}
 		// Add the list ordering clause.
 		$orderCol  = $this->state->get('list.ordering', 'id');
-		$orderDirn = $this->state->get('list.direction', 'ASC');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
 
 		if ($orderCol && $orderDirn)
 		{
@@ -310,58 +318,7 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 		foreach ($items as $oneItem)
 		{
 					$oneItem->type = !empty($oneItem->type) ? Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSSCHEDULEDMESSAGES_TYPE_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->type)))) : '';
-
-			if (isset($oneItem->template_id))
-			{
-				$values    = explode(',', $oneItem->template_id);
-				$textValue = array();
-
-				foreach ($values as $value)
-				{
-					$db    = $this->getDbo();
-					$query = $db->getQuery(true);
-					$query
-						->select('`#__dt_whatsapp_tenants_templates_4168298`.`name`')
-						->from($db->quoteName('#__dt_whatsapp_tenants_templates', '#__dt_whatsapp_tenants_templates_4168298'))
-						->where($db->quoteName('#__dt_whatsapp_tenants_templates_4168298.id') . ' = '. $db->quote($db->escape($value)));
-
-					$db->setQuery($query);
-					$results = $db->loadObject();
-
-					if ($results)
-					{
-						$textValue[] = $results->name;
-					}
-				}
-
-				$oneItem->template_id = !empty($textValue) ? implode(', ', $textValue) : $oneItem->template_id;
-			}
-
-			if (isset($oneItem->keyword_id))
-			{
-				$values    = explode(',', $oneItem->keyword_id);
-				$textValue = array();
-
-				foreach ($values as $value)
-				{
-					$db    = $this->getDbo();
-					$query = $db->getQuery(true);
-					$query
-						->select('`#__dt_whatsapp_tenants_keywords_4169744`.`name`')
-						->from($db->quoteName('#__dt_whatsapp_tenants_keywords', '#__dt_whatsapp_tenants_keywords_4169744'))
-						->where($db->quoteName('#__dt_whatsapp_tenants_keywords_4169744.id') . ' = '. $db->quote($db->escape($value)));
-
-					$db->setQuery($query);
-					$results = $db->loadObject();
-
-					if ($results)
-					{
-						$textValue[] = $results->name;
-					}
-				}
-
-				$oneItem->keyword_id = !empty($textValue) ? implode(', ', $textValue) : $oneItem->keyword_id;
-			}
+					$oneItem->status = !empty($oneItem->status) ? Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSSCHEDULEDMESSAGES_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->status)))) : '';
 		}
 
 		return $items;

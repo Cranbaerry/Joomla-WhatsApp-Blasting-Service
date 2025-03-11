@@ -12,7 +12,6 @@
     <field field_name="checked_out_time" field_type="DATETIME" description=""/>
     <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
     <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
-    <field action="remove" field_name="type"/>
     <field action="remove" field_name="keyword_id"/>
   </table>
   <table action="add" table_name="#__dt_whatsapp_tenants_contacts" storage_engine="" collation="utf8mb4_unicode_ci">
@@ -43,7 +42,7 @@
     <field field_name="checked_out_time" field_type="DATETIME" description=""/>
     <field field_name="blasting_id" field_type="INT" default="0" field_length="11" description=""/>
     <field field_name="created_by" field_type="INT" field_length="11" index="index" description=""/>
-    <field field_name="status" field_type="VARCHAR" field_length="255" description=""/>
+    <field action="change" field_name="status" field_type="VARCHAR" field_length="255" description=""/>
     <field field_name="modified_by" field_type="INT" field_length="11" index="index" description=""/>
     <field field_name="raw_response" field_type="TEXT" description=""/>
     <field field_name="scheduled_time" field_type="DATETIME" description=""/>

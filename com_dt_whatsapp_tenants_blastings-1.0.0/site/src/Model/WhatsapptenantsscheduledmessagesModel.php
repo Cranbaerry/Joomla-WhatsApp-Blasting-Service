@@ -201,17 +201,15 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 				else
 				{
 					$search = $db->Quote('%' . $db->escape($search, true) . '%');
-					$query->where('( a.target_phone_number LIKE ' . $search . '  OR #__dt_whatsapp_tenants_templates_4168298.name LIKE ' . $search . '  OR  a.keyword_message LIKE ' . $search . ' )');
+					$query->where('( a.target_phone_number LIKE ' . $search . ' )');
 				}
 			}
 			
 
-		// Filtering template_id
-		$filter_template_id = $this->state->get("filter.template_id");
-
-		if ($filter_template_id)
-		{
-			$query->where("a.`template_id` = '".$db->escape($filter_template_id)."'");
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+		if ($filter_status != '') {
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
 		}
 
 			
@@ -328,6 +326,11 @@ class WhatsapptenantsscheduledmessagesModel extends ListModel
 				$item->blasting_id = !empty($textValue) ? implode(', ', $textValue) : $item->blasting_id;
 			}
 
+
+				if (!empty($item->status))
+					{
+						$item->status = Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSSCHEDULEDMESSAGES_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$item->status))));
+					}
 		}
 
 		return $items;

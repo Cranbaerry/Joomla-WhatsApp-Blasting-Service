@@ -150,7 +150,7 @@ class WhatsapptenantsmessagehistoriesModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState("a.id", "ASC");
+		parent::populateState('id', 'DESC');
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -272,8 +272,8 @@ class WhatsapptenantsmessagehistoriesModel extends ListModel
 			$query->where("a.`phone_number_id` = '".$db->escape($filter_phone_number_id)."'");
 		}
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering', "a.id");
-		$orderDirn = $this->state->get('list.direction', "ASC");
+		$orderCol  = $this->state->get('list.ordering', 'id');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
 
 		if ($orderCol && $orderDirn)
 		{

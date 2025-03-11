@@ -69,7 +69,14 @@ use Joomla\Utilities\ArrayHelper;
 
 		<tr>
 			<th><?php echo Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSSCHEDULEDMESSAGE_STATUS'); ?></th>
-			<td><?php echo $this->item->status; ?></td>
+			<td>
+			<?php
+
+			if (!empty($this->item->status) || $this->item->status === 0)
+			{
+				echo Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSSCHEDULEDMESSAGES_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$this->item->status))));
+			}
+			?></td>
 		</tr>
 
 		<tr>

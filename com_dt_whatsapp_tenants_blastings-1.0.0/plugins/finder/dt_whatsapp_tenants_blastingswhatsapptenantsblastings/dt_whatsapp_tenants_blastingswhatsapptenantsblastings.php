@@ -199,7 +199,7 @@ class PlgFinderDt_whatsapp_tenants_blastingswhatsapptenantsblastings extends Ada
 
 		// Check if we can use the supplied SQL query.
 		$query = $query instanceof DatabaseQuery ? $query : $db->getQuery(true)
-		->select('a.id, a.status AS title, a.status AS summary, a.state AS state, 1 AS access');
+		->select('a.id, a.id AS title, a.id AS summary, a.state AS state, 1 AS access');
 
 
 		$query->from($this->table . ' as a');

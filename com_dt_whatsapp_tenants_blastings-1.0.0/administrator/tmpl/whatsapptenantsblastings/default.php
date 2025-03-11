@@ -138,16 +138,7 @@ if (!empty($saveOrder))
 								<?php echo $item->template_id; ?>
 							</td>
 							<td>
-								<?php if (isset($item->checked_out) && $item->checked_out && ($canEdit || $canChange)) : ?>
-									<?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->uEditor, $item->checked_out_time, 'whatsapptenantsblastings.', $canCheckin); ?>
-								<?php endif; ?>
-								<?php if ($canEdit) : ?>
-									<a href="<?php echo Route::_('index.php?option=com_dt_whatsapp_tenants_blastings&task=whatsapptenantsblasting.edit&id='.(int) $item->id); ?>">
-									<?php echo $this->escape($item->status); ?>
-									</a>
-								<?php else : ?>
-												<?php echo $this->escape($item->status); ?>
-								<?php endif; ?>
+								<?php echo $item->status; ?>
 							</td>
 							<td>
 								<?php echo $item->mode; ?>

@@ -146,7 +146,7 @@ class WhatsapptenantsblastingsModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState("a.id", "ASC");
+		parent::populateState('id', 'DESC');
 
 		$context = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
 		$this->setState('filter.search', $context);
@@ -255,10 +255,18 @@ class WhatsapptenantsblastingsModel extends ListModel
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.status LIKE ' . $search . '  OR #__dt_whatsapp_tenants_templates_4168267.name LIKE ' . $search . '  OR  a.mode LIKE ' . $search . '  OR  a.scheduled_time LIKE ' . $search . ' )');
+				$query->where('(#__dt_whatsapp_tenants_templates_4168267.name LIKE ' . $search . '  OR  a.mode LIKE ' . $search . '  OR  a.scheduled_time LIKE ' . $search . ' )');
 			}
 		}
 		
+
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+
+		if ($filter_status !== null && (is_numeric($filter_status) || !empty($filter_status)))
+		{
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
+		}
 
 		// Filtering template_id
 		$filter_template_id = $this->state->get("filter.template_id");
@@ -276,8 +284,8 @@ class WhatsapptenantsblastingsModel extends ListModel
 			$query->where("a.`mode` = '".$db->escape($filter_mode)."'");
 		}
 		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering', "a.id");
-		$orderDirn = $this->state->get('list.direction', "ASC");
+		$orderCol  = $this->state->get('list.ordering', 'id');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
 
 		if ($orderCol && $orderDirn)
 		{
@@ -298,6 +306,7 @@ class WhatsapptenantsblastingsModel extends ListModel
 		
 		foreach ($items as $oneItem)
 		{
+					$oneItem->status = !empty($oneItem->status) ? Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$oneItem->status)))) : '';
 
 			if (isset($oneItem->template_id))
 			{

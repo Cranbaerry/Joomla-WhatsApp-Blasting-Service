@@ -2,7 +2,12 @@
 <form addfieldprefix="Comdtwhatsapptenantsblastings\Component\Dt_whatsapp_tenants_blastings\Administrator\Field">
   <fieldset>
     <field name="id" type="text" readonly="true" class="readonly" default="0" description="JGLOBAL_FIELD_ID_DESC"/>
-    <field name="status" default="QUEUED" filter="safehtml" type="text" readonly="true" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_STATUS" hidden="true" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS"/>
+    <field name="status" default="QUEUED" type="list" label="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS" description="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_DESC_WHATSAPPTENANTSBLASTING_STATUS" hidden="true" hint="COM_DT_WHATSAPP_TENANTS_BLASTINGS_FORM_LBL_WHATSAPPTENANTSBLASTING_STATUS">
+      <option value="QUEUED">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_QUEUED</option>
+      <option value="PROCESSING">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_PROCESSING</option>
+      <option value="FAILED">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_FAILED</option>
+      <option value="FINISHED">COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_FINISHED</option>
+    </field>
     <field name="state" default="1" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1">
       <option value="1">JPUBLISHED</option>
       <option value="0">JUNPUBLISHED</option>

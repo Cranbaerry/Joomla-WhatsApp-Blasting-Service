@@ -176,6 +176,21 @@ class WhatsapptenantsblastingModel extends AdminModel
 			$data = $this->item;
 			
 
+			// Support for multiple or not foreign key field: status
+			$array = array();
+
+			foreach ((array) $data->status as $value)
+			{
+				if (!is_array($value))
+				{
+					$array[] = $value;
+				}
+			}
+			if(!empty($array)){
+
+			$data->status = $array;
+			}
+
 			// Support for multiple or not foreign key field: mode
 			$array = array();
 

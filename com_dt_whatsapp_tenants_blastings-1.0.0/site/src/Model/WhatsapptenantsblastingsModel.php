@@ -90,7 +90,7 @@ class WhatsapptenantsblastingsModel extends ListModel
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// List state information.
-		parent::populateState("a.id", "DESC");
+		parent::populateState('a.id', 'DESC');
 
 		$app = Factory::getApplication();
 		$list = $app->getUserState($this->context . '.list');
@@ -103,8 +103,8 @@ class WhatsapptenantsblastingsModel extends ListModel
 		$value = $app->input->get('limitstart', 0, 'uint');
 		$this->setState('list.start', $value);
 
-		$ordering  = $this->getUserStateFromRequest($this->context .'.filter_order', 'filter_order', "a.id");
-		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', "DESC"));
+		$ordering  = $this->getUserStateFromRequest($this->context .'.filter_order', 'filter_order', 'a.id');
+		$direction = strtoupper($this->getUserStateFromRequest($this->context .'.filter_order_Dir', 'filter_order_Dir', 'DESC'));
 		
 		if(!empty($ordering) || !empty($direction))
 		{
@@ -190,10 +190,16 @@ class WhatsapptenantsblastingsModel extends ListModel
 				else
 				{
 					$search = $db->Quote('%' . $db->escape($search, true) . '%');
-					$query->where('( a.status LIKE ' . $search . '  OR #__dt_whatsapp_tenants_templates_4168267.name LIKE ' . $search . ' )');
+					$query->where('(#__dt_whatsapp_tenants_templates_4168267.name LIKE ' . $search . ' )');
 				}
 			}
 			
+
+		// Filtering status
+		$filter_status = $this->state->get("filter.status");
+		if ($filter_status != '') {
+			$query->where("a.`status` = '".$db->escape($filter_status)."'");
+		}
 
 		// Filtering template_id
 		$filter_template_id = $this->state->get("filter.template_id");
@@ -212,8 +218,8 @@ class WhatsapptenantsblastingsModel extends ListModel
 			
 			
 			// Add the list ordering clause.
-			$orderCol  = $this->state->get('list.ordering', "a.id");
-			$orderDirn = $this->state->get('list.direction', "DESC");
+			$orderCol  = $this->state->get('list.ordering', 'a.id');
+			$orderDirn = $this->state->get('list.direction', 'DESC');
 
 			if ($orderCol && $orderDirn)
 			{
@@ -234,6 +240,11 @@ class WhatsapptenantsblastingsModel extends ListModel
 		
 		foreach ($items as $item)
 		{
+
+				if (!empty($item->status))
+					{
+						$item->status = Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_WHATSAPPTENANTSBLASTINGS_STATUS_OPTION_' . preg_replace('/[^A-Za-z0-9\_-]/', '',strtoupper(str_replace(' ', '_',$item->status))));
+					}
 
 			if (isset($item->template_id))
 			{
