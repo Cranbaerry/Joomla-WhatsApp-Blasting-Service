@@ -266,15 +266,15 @@ class WhatsapptenantstemplateformController extends FormController
 						"type"    => "BODY",
 						"text"    => trim($data["body"])
 					],
-					[
-						"type"    => "BUTTONS",
-						"buttons" => [
-							[
-								"type" => "QUICK_REPLY",
-								"text" => "Unsubscribe from Promos"
-							]
-						]
-					]
+					// [
+					// 	"type"    => "BUTTONS",
+					// 	"buttons" => [
+					// 		[
+					// 			"type" => "QUICK_REPLY",
+					// 			"text" => "Unsubscribe from Promos"
+					// 		]
+					// 	]
+					// ]
 				]
 			];
 
