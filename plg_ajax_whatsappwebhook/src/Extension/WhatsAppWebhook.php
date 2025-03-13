@@ -108,7 +108,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
         try {
             $db = Factory::getDbo();
             $query = $db->getQuery(true)
-                ->select($db->quoteName(['dreamztrack_key', 'dreamztrack_endpoint', 'forward_url']))
+                ->select($db->quoteName(['dreamztrack_key', 'dreamztrack_endpoint', 'dreamztrack_branch', 'forward_url']))
                 ->from($db->quoteName('#__dt_whatsapp_tenants_configs'))
                 ->where($db->quoteName('user_id') . ' = ' . $db->quote($uid));
             return $db->setQuery($query)->loadAssoc();
@@ -130,11 +130,13 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
      * @param string $uid         The user identifier (used in created_by).
      * @param string $messageText The incoming message text.
      *
-     * @return array List of matched keyword names.
+     * @return array Object containing matched keyword names and logs.
      */
-    protected function updateContactKeywordsIfMatched(array $contact, string $uid, string $messageText, ): array
+    protected function updateContactKeywordsIfMatched(array $contact, string $uid, string $messageText): array
     {
         $db = Factory::getDbo();
+        $logs = [];
+        $logs[] = 'Started processing keywords for config ID: ' . ($contact['id'] ?? 'unknown');
 
         // Retrieve active keywords (including scheduled_message_json) for this user.
         $query = $db->getQuery(true)
@@ -144,6 +146,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
             ->where($db->quoteName('state') . ' = 1');
         $db->setQuery($query);
         $activeKeywords = $db->loadAssocList();
+        $logs[] = 'Found ' . count($activeKeywords) . ' active keywords';
 
         $matchedKeywordIds = [];
         $matchedKeywordNames = [];
@@ -154,14 +157,17 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                 if (stripos($messageText, $keyword['name']) !== false) {
                     $matchedKeywordIds[] = $keyword['id'];
                     $matchedKeywordNames[] = $keyword['name'];
+                    $logs[] = 'Matched keyword: ' . $keyword['name'];
 
                     // Insert scheduled messages for this matched keyword.
                     if (!empty($keyword['scheduled_message_json'])) {
                         $scheduleItems = json_decode($keyword['scheduled_message_json'], true);
                         if (is_array($scheduleItems)) {
+                            $logs[] = 'Processing ' . count($scheduleItems) . ' scheduled messages for keyword: ' . $keyword['name'];
                             foreach ($scheduleItems as $item) {
                                 // Validate required fields.
                                 if (empty($item['message']) || empty($item['interval']) || empty($item['unit'])) {
+                                    $logs[] = 'Skipped scheduled item - missing required fields';
                                     continue;
                                 }
                                 $intervalValue = (int) $item['interval'];
@@ -183,6 +189,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                                         break;
                                     default:
                                         // Skip if unit is unknown.
+                                        $logs[] = 'Skipped scheduled item - unknown time unit: ' . $unit;
                                         continue 2;
                                 }
 
@@ -209,6 +216,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                                     ->columns($db->quoteName(array_keys($data)))
                                     ->values(implode(',', array_map([$db, 'quote'], $data)));
                                 $db->setQuery($query)->execute();
+                                $logs[] = 'Scheduled message for ' . $sendAt . ' (' . $intervalValue . ' ' . $unit . ' from now)';
                             }
                         }
                     }
@@ -218,7 +226,11 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
 
         // Only update the contact if at least one active keyword was matched.
         if (empty($matchedKeywordIds)) {
-            return [];
+            $logs[] = 'No keywords matched, not updating contact';
+            return [
+                'keywords' => [],
+                'logs' => $logs
+            ];
         }
 
         // Use existing keywords_tags from $contact.
@@ -227,6 +239,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
         if (!empty($currentTags)) {
             $currentKeywordIds = array_map('trim', explode(',', $currentTags));
         }
+        $logs[] = 'Current keyword tags: ' . ($currentTags ?: 'none');
 
         // Merge new matched keyword IDs with the current ones and remove duplicates.
         $mergedIds = array_unique(array_merge($currentKeywordIds, $matchedKeywordIds));
@@ -240,8 +253,12 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
             ->where($db->quoteName('id') . ' = ' . $db->quote($contact['id']));
         $db->setQuery($query);
         $db->execute();
+        $logs[] = 'Contact updated with new keywords: ' . $mergedIdsStr;
 
-        return $matchedKeywordNames;
+        return [
+            'keywords' => $matchedKeywordNames,
+            'logs' => $logs
+        ];
     }
 
 
@@ -399,10 +416,11 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                         if (!$config) {
                             $result['errors'][] = 'No config found for uid: ' . $uid;
                         } else {
-                            $matchedKeywordNames = $this->updateContactKeywordsIfMatched($contact, $uid, $text);
-                            $tags = !empty($matchedKeywordNames) ? $matchedKeywordNames : [];
+                            $keywordsResult = $this->updateContactKeywordsIfMatched($contact, $uid, $text);
+                            $tags = $keywordsResult['keywords'] ?? [];
                             $secret = $config['dreamztrack_key'] ?? '';
                             $env = strtoupper($config['dreamztrack_endpoint'] ?? 'DEVELOPMENT');
+                            $result['logs']['keywords'] = $keywordsResult['logs'] ?? [];
                             $endpoint = ($env === 'PRODUCTION')
                                 ? 'https://dreamztrack-api-prod.dreamztrack.com.my/open-api/v1/customer'
                                 : 'https://dreamztrack-api-dev.dreamztrack.com.my/open-api/v1/customer';
@@ -410,7 +428,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                             $apiPayload = [
                                 "contact_no" => $from,
                                 "name" => $contactName,
-                                "branch_name" => "HQ Branch",
+                                "branch_name" => $config['dreamztrack_branch'] ?? "HQ Branch",
                                 "source_name" => "WhatsApp",
                                 "type" => "WhatsApp",
                                 "tags" => $tags
