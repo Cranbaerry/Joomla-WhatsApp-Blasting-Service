@@ -341,7 +341,8 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
             'data' => [],
             'errors' => [],
             'leads' => null,
-            'forward' => null
+            'forward' => null,
+            'logs' => []
         ];
 
         switch ($field) {
@@ -397,50 +398,111 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                     $result['data'] = ['from' => $from, 'text' => $text];
 
                     $contact = null;
+                    
+                    // Extract contact info from the parsed value
+                    $contactInfo = null;
+                    if (isset($value['contacts']) && is_array($value['contacts']) && !empty($value['contacts'])) {
+                        $contactInfo = $value['contacts'][0] ?? null;
+                    }
+                    
                     try {
                         $db = Factory::getDbo();
                         $normalizedFrom = ltrim($from, '+');
+                        
+                        // Check if contact exists
                         $query = $db->getQuery(true)
                             ->select($db->quoteName(['id', 'name', 'keywords_tags', 'phone_number']))
                             ->from($db->quoteName('#__dt_whatsapp_tenants_contacts'))
                             ->where('REPLACE(' . $db->quoteName('phone_number') . ", '+', '' ) = " . $db->quote($normalizedFrom));
                         $contact = $db->setQuery($query)->loadAssoc();
+                        
+                        $result['logs']['contact'] = [];
+                        $result['logs']['contact'][] = 'Looking up contact with number: ' . $normalizedFrom;
+                        
+                        if ($contact) {
+                            $result['logs']['contact'][] = 'Found existing contact: ' . ($contact['name'] ?? 'unnamed');
+                            // Update existing contact if we have new info from the payload
+                            if ($contactInfo && isset($contactInfo['profile']['name']) && $contactInfo['profile']['name'] !== $contact['name']) {
+                                $db->setQuery(
+                                    $db->getQuery(true)
+                                        ->update($db->quoteName('#__dt_whatsapp_tenants_contacts'))
+                                        ->set($db->quoteName('name') . ' = ' . $db->quote($contactInfo['profile']['name']))
+                                        ->set($db->quoteName('last_updated') . ' = ' . $db->quote(date('Y-m-d H:i:s')))
+                                        ->where($db->quoteName('id') . ' = ' . $db->quote($contact['id']))
+                                )->execute();
+                                
+                                // Update name in current contact data
+                                $contact['name'] = $contactInfo['profile']['name'];
+                                $result['logs']['contact'][] = 'Updated contact name to: ' . $contactInfo['profile']['name'];
+                            }
+                        } else if ($contactInfo && isset($contactInfo['profile']['name'])) {
+                            $result['logs']['contact'][] = 'Creating new contact: ' . $contactInfo['profile']['name'];
+                            // Insert new contact
+                            $uid = Factory::getApplication()->input->get('uid', '', 'STRING');
+                            
+                            $insertQuery = $db->getQuery(true)
+                                ->insert($db->quoteName('#__dt_whatsapp_tenants_contacts'))
+                                ->columns($db->quoteName(['name', 'phone_number', 'created_by', 'last_updated']))
+                                ->values(implode(',', [
+                                    $db->quote($contactInfo['profile']['name']),
+                                    $db->quote($from),
+                                    $db->quote($uid),
+                                    $db->quote(date('Y-m-d H:i:s'))
+                                ]));
+                            $db->setQuery($insertQuery)->execute();
+                            
+                            // Get the newly inserted contact ID
+                            $contact = [
+                                'id' => $db->insertid(),
+                                'name' => $contactInfo['profile']['name'],
+                                'phone_number' => $from,
+                                'keywords_tags' => ''
+                            ];
+                            $result['logs']['contact'][] = 'Created new contact with ID: ' . $contact['id'];
+                        } else {
+                            $result['logs']['contact'][] = 'Contact not found and no contact info in payload';
+                        }
                     } catch (\Exception $e) {
-                        $result['errors'][] = 'Contact lookup error: ' . $e->getMessage();
+                        $result['errors'][] = 'Contact lookup/upsert error: ' . $e->getMessage();
+                        $result['logs']['contact'][] = 'Error: ' . $e->getMessage();
                     }
 
                     if ($contact && isset($contact['name'])) {
-                        $contactName = $contact['name'];
                         $uid = Factory::getApplication()->input->get('uid', '', 'STRING');
                         $config = $this->getConfig($uid);
                         if (!$config) {
                             $result['errors'][] = 'No config found for uid: ' . $uid;
+                            $result['logs']['api'][] = 'No config found for uid: ' . $uid;
                         } else {
                             $keywordsResult = $this->updateContactKeywordsIfMatched($contact, $uid, $text);
-                            $tags = $keywordsResult['keywords'] ?? [];
+                            $result['logs']['keywords'] = $keywordsResult['logs'] ?? [];
+                            
                             $secret = $config['dreamztrack_key'] ?? '';
                             $env = strtoupper($config['dreamztrack_endpoint'] ?? 'DEVELOPMENT');
-                            $result['logs']['keywords'] = $keywordsResult['logs'] ?? [];
                             $endpoint = ($env === 'PRODUCTION')
                                 ? 'https://dreamztrack-api-prod.dreamztrack.com.my/open-api/v1/customer'
                                 : 'https://dreamztrack-api-dev.dreamztrack.com.my/open-api/v1/customer';
 
+                            $result['logs']['api'] = [];
+                            $result['logs']['api'][] = 'Using endpoint: ' . $endpoint;
+
                             $apiPayload = [
                                 "contact_no" => $from,
-                                "name" => $contactName,
+                                "name" => $contact['name'],
                                 "branch_name" => $config['dreamztrack_branch'] ?? "HQ Branch",
                                 "source_name" => "WhatsApp",
                                 "type" => "WhatsApp",
-                                "tags" => $tags
+                                "tags" => $keywordsResult['keywords'] ?? []
                             ];
 
                             if (empty($secret)) {
+                                $result['logs']['api'][] = 'No DreamzTrack secret found, skipping API call';
                                 $result['leads'] = [
                                     'code' => null,
-                                    'body' => null,
-                                    'detail' => 'No DreamzTrack secret found, skipping cURL call.'
+                                    'body' => null
                                 ];
                             } else {
+                                $result['logs']['api'][] = 'Sending contact data to DreamzTrack';
                                 try {
                                     $ch = curl_init($endpoint);
                                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -453,25 +515,26 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                                     $apiResponseBody = curl_exec($ch);
                                     $apiResponseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                                     curl_close($ch);
+                                    $result['logs']['api'][] = 'API response code: ' . $apiResponseCode;
                                     $result['leads'] = [
                                         'code' => $apiResponseCode,
-                                        'body' => $apiResponseBody,
-                                        'detail' => 'Sent lead contact to DreamzTrack with keywords.'
+                                        'body' => $apiResponseBody
                                     ];
                                 } catch (\Exception $e) {
+                                    $result['logs']['api'][] = 'API error: ' . $e->getMessage();
                                     $result['leads'] = [
                                         'code' => null,
-                                        'body' => null,
-                                        'detail' => 'Dreamztrack API error: ' . $e->getMessage()
+                                        'body' => null
                                     ];
+                                    $result['errors'][] = 'Dreamztrack API error: ' . $e->getMessage();
                                 }
                             }
                         }
                     } else {
+                        $result['logs']['api'] = ['No contact found, skipping API call'];
                         $result['leads'] = [
                             'code' => null,
-                            'body' => null,
-                            'detail' => 'No contact found, skipping cURL call.'
+                            'body' => null
                         ];
                     }
                 }
@@ -490,16 +553,18 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
 
         // For messages events, forward the payload using the forward_url config.
         if ($field === 'messages') {
+            $result['logs']['forwarding'] = [];
             $uid = Factory::getApplication()->input->get('uid', '', 'STRING');
             if (empty($uid)) {
                 $result['status'] = self::STATUS_ERROR;
-                $result['forward'] = ['detail' => 'No uid provided'];
+                $result['logs']['forwarding'][] = 'No uid provided';
             } else {
                 $config = $this->getConfig($uid);
                 if (!$config || empty($config['forward_url'])) {
                     $result['status'] = self::STATUS_ERROR;
-                    $result['forward'] = ['detail' => 'No forward URL found for user: ' . $uid];
+                    $result['logs']['forwarding'][] = 'No forward URL found for user: ' . $uid;
                 } else {
+                    $result['logs']['forwarding'][] = 'Forwarding to URL: ' . $config['forward_url'];
                     try {
                         $ch = curl_init($config['forward_url']);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -511,15 +576,15 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                         $responseBody = curl_exec($ch);
                         $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                         curl_close($ch);
+                        $result['logs']['forwarding'][] = 'Response code: ' . $responseCode;
                         $result['forward'] = [
-                            'payload' => $this->originalPayload,
                             'response_code' => $responseCode,
-                            'response_body' => $responseBody,
-                            'detail' => 'Forwarded using cURL.'
+                            'response_body' => $responseBody
                         ];
                     } catch (\Exception $e) {
                         $result['status'] = self::STATUS_ERROR;
-                        $result['forward'] = ['detail' => 'Forwarding error: ' . $e->getMessage()];
+                        $result['logs']['forwarding'][] = 'Error: ' . $e->getMessage();
+                        $result['errors'][] = 'Forwarding error: ' . $e->getMessage();
                     }
                 }
             }
