@@ -152,7 +152,7 @@ class WhatsapptenantskeywordformController extends FormController
 				$isNew = !isset($data['id']) || empty($data['id']);
 
 				// Only update the created_date if this is a new record or if explicitly requested
-				if ($isNew || isset($data['override_created_date'])) {
+				if ($isNew) {
 					$query = $db->getQuery(true)
 						->update($db->quoteName('#__dt_whatsapp_tenants_keywords'))
 						->set($db->quoteName('created_date') . ' = ' . $db->quote($data['created_date']))
@@ -166,7 +166,7 @@ class WhatsapptenantskeywordformController extends FormController
 				$this->app->enqueueMessage('Note: Could not update custom date: ' . $e->getMessage(), 'warning');
 			}
 		}
-		
+
 		// Check in the profile.
 		if ($return) {
 			$model->checkin($return);
