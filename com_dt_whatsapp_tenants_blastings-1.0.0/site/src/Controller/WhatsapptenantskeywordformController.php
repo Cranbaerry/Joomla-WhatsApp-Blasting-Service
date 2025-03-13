@@ -41,7 +41,7 @@ class WhatsapptenantskeywordformController extends FormController
 	{
 		// Get the previous edit id (if any) and the current edit id.
 		$previousId = (int) $this->app->getUserState('com_dt_whatsapp_tenants_blastings.edit.whatsapptenantskeyword.id');
-		$editId     = $this->input->getInt('id', 0);
+		$editId = $this->input->getInt('id', 0);
 
 		// Set the user id for the user to edit in the session.
 		$this->app->setUserState('com_dt_whatsapp_tenants_blastings.edit.whatsapptenantskeyword.id', $editId);
@@ -50,14 +50,12 @@ class WhatsapptenantskeywordformController extends FormController
 		$model = $this->getModel('Whatsapptenantskeywordform', 'Site');
 
 		// Check out the item
-		if ($editId)
-		{
+		if ($editId) {
 			$model->checkout($editId);
 		}
 
 		// Check in the previous user.
-		if ($previousId)
-		{
+		if ($previousId) {
 			$model->checkin($previousId);
 		}
 
@@ -87,8 +85,7 @@ class WhatsapptenantskeywordformController extends FormController
 		// Validate the posted data.
 		$form = $model->getForm();
 
-		if (!$form)
-		{
+		if (!$form) {
 			throw new \Exception($model->getError(), 500);
 		}
 
@@ -105,20 +102,15 @@ class WhatsapptenantskeywordformController extends FormController
 		$data = $model->validate($form, $data);
 
 		// Check for errors.
-		if ($data === false)
-		{
+		if ($data === false) {
 			// Get the validation messages.
 			$errors = $model->getErrors();
 
 			// Push up to three validation messages out to the user.
-			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
-			{
-				if ($errors[$i] instanceof \Exception)
-				{
+			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
+				if ($errors[$i] instanceof \Exception) {
 					$this->app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-				}
-				else
-				{
+				} else {
 					$this->app->enqueueMessage($errors[$i], 'warning');
 				}
 			}
@@ -139,8 +131,7 @@ class WhatsapptenantskeywordformController extends FormController
 		$return = $model->save($data);
 
 		// Check for errors.
-		if ($return === false)
-		{
+		if ($return === false) {
 			// Save the data in the session.
 			$this->app->setUserState('com_dt_whatsapp_tenants_blastings.edit.whatsapptenantskeyword.data', $data);
 
@@ -151,9 +142,33 @@ class WhatsapptenantskeywordformController extends FormController
 			$this->redirect();
 		}
 
+		// Check if save was successful and we have a date to preserve
+		if ($return && isset($data['created_date']) && !empty($data['created_date'])) {
+			try {
+				// Get database object
+				$db = Factory::getDbo();
+
+				// Check if this is a new record or an update
+				$isNew = !isset($data['id']) || empty($data['id']);
+
+				// Only update the created_date if this is a new record or if explicitly requested
+				if ($isNew || isset($data['override_created_date'])) {
+					$query = $db->getQuery(true)
+						->update($db->quoteName('#__dt_whatsapp_tenants_keywords'))
+						->set($db->quoteName('created_date') . ' = ' . $db->quote($data['created_date']))
+						->where($db->quoteName('id') . ' = ' . (int) $return);
+
+					$db->setQuery($query);
+					$db->execute();
+				}
+			} catch (\Exception $e) {
+				// Log the error but don't fail the whole operation
+				$this->app->enqueueMessage('Note: Could not update custom date: ' . $e->getMessage(), 'warning');
+			}
+		}
+		
 		// Check in the profile.
-		if ($return)
-		{
+		if ($return) {
 			$model->checkin($return);
 		}
 
@@ -161,14 +176,13 @@ class WhatsapptenantskeywordformController extends FormController
 		$this->app->setUserState('com_dt_whatsapp_tenants_blastings.edit.whatsapptenantskeyword.id', null);
 
 		// Redirect to the list screen.
-		if (!empty($return))
-		{
+		if (!empty($return)) {
 			$this->setMessage(Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_ITEM_SAVED_SUCCESSFULLY'));
 		}
-		
+
 		$menu = Factory::getApplication()->getMenu();
 		$item = $menu->getActive();
-		$url  = (empty($item->link) ? 'index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords' : $item->link);
+		$url = (empty($item->link) ? 'index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords' : $item->link);
 		$this->setRedirect(Route::_($url, false));
 
 		// Flush the data from the session.
@@ -196,14 +210,13 @@ class WhatsapptenantskeywordformController extends FormController
 		$model = $this->getModel('Whatsapptenantskeywordform', 'Site');
 
 		// Check in the item
-		if ($editId)
-		{
+		if ($editId) {
 			$model->checkin($editId);
 		}
 
 		$menu = Factory::getApplication()->getMenu();
 		$item = $menu->getActive();
-		$url  = (empty($item->link) ? 'index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords' : $item->link);
+		$url = (empty($item->link) ? 'index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords' : $item->link);
 		$this->setRedirect(Route::_($url, false));
 	}
 
@@ -219,11 +232,10 @@ class WhatsapptenantskeywordformController extends FormController
 	public function remove()
 	{
 		$model = $this->getModel('Whatsapptenantskeywordform', 'Site');
-		$pk    = $this->input->getInt('id');
+		$pk = $this->input->getInt('id');
 
 		// Attempt to save the data
-		try
-		{
+		try {
 			// Check in before delete
 			$return = $model->checkin($return);
 			// Clear id from the session.
@@ -233,23 +245,18 @@ class WhatsapptenantskeywordformController extends FormController
 			$item = $menu->getActive();
 			$url = (empty($item->link) ? 'index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords' : $item->link);
 
-			if($return)
-			{
+			if ($return) {
 				$model->delete($pk);
 				$this->setMessage(Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_ITEM_DELETED_SUCCESSFULLY'));
-			}
-			else
-			{
+			} else {
 				$this->setMessage(Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_ITEM_DELETED_UNSUCCESSFULLY'), 'warning');
 			}
-			
+
 
 			$this->setRedirect(Route::_($url, false));
 			// Flush the data from the session.
 			$this->app->setUserState('com_dt_whatsapp_tenants_blastings.edit.whatsapptenantskeyword.data', null);
-		}
-		catch (\Exception $e)
-		{
+		} catch (\Exception $e) {
 			$errorType = ($e->getCode() == '404') ? 'error' : 'warning';
 			$this->setMessage($e->getMessage(), $errorType);
 			$this->setRedirect('index.php?option=com_dt_whatsapp_tenants_blastings&view=whatsapptenantskeywords');
@@ -257,17 +264,17 @@ class WhatsapptenantskeywordformController extends FormController
 	}
 
 	/**
-     * Function that allows child controller access to model data
-     * after the data has been saved.
-     *
-     * @param   BaseDatabaseModel  $model      The data model object.
-     * @param   array              $validData  The validated data.
-     *
-     * @return  void
-     *
-     * @since   1.6
-     */
-    protected function postSaveHook(BaseDatabaseModel $model, $validData = array())
-    {
-    }
+	 * Function that allows child controller access to model data
+	 * after the data has been saved.
+	 *
+	 * @param   BaseDatabaseModel  $model      The data model object.
+	 * @param   array              $validData  The validated data.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.6
+	 */
+	protected function postSaveHook(BaseDatabaseModel $model, $validData = array())
+	{
+	}
 }
