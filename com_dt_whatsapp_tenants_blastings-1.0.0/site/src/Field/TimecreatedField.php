@@ -47,7 +47,8 @@ class TimecreatedField extends FormField
 
 		if (!strtotime($time_created))
 		{
-			$time_created = Factory::getDate()->toSql();
+			// SYNC TO SERVER TIME
+			$time_created = $time_created = Factory::getDate('now', Factory::getConfig()->get('offset'))->toSql(true);
 			$html[]       = '<input type="hidden" name="' . $this->name . '" value="' . $time_created . '" />';
 		}
 
