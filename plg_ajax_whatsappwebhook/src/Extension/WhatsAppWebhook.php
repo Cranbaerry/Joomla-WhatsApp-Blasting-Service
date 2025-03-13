@@ -261,6 +261,106 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
         ];
     }
 
+    /**
+     * Get contacts associated with the current logged in user.
+     * Can be filtered by search term, pagination applied, and sorted.
+     *
+     * @param string $search Optional search term to filter contacts by name or phone number
+     * @param int $limit Optional limit for pagination (default 20)
+     * @param int $offset Optional offset for pagination (default 0)
+     * @param string $orderBy Optional field to sort by (default 'last_updated')
+     * @param string $orderDir Optional sort direction ('ASC' or 'DESC', default 'DESC')
+     * 
+     * @return array Array containing 'items' (contacts) and 'total' (total count)
+     */
+    public function getContacts($search = '', $limit = 20, $offset = 0, $orderBy = 'last_updated', $orderDir = 'DESC')
+    {
+        try {
+            // Get current user
+            $user = Factory::getUser();
+            if (!$user || !$user->id) {
+                return ['items' => [], 'total' => 0, 'error' => 'Not authenticated'];
+            }
+
+            $db = Factory::getDbo();
+            $query = $db->getQuery(true);
+
+            // Select fields
+            $query->select($db->quoteName([
+                'id',
+                'name',
+                'phone_number',
+                'created_by',
+                'last_updated',
+                'keywords_tags'
+            ]));
+            $query->from($db->quoteName('#__dt_whatsapp_tenants_contacts'));
+            $query->where($db->quoteName('created_by') . ' = ' . $db->quote($user->id));
+
+            // Add search filter if provided
+            if (!empty($search)) {
+                $search = $db->quote('%' . $db->escape($search, true) . '%', false);
+                $query->where('(' .
+                    $db->quoteName('name') . ' LIKE ' . $search . ' OR ' .
+                    $db->quoteName('phone_number') . ' LIKE ' . $search .
+                    ')');
+            }
+
+            // Get total count before applying limit
+            $countQuery = clone $query;
+            $db->setQuery($countQuery);
+            $totalCount = (int) $db->loadResult();
+
+            // Apply sorting
+            $validColumns = ['id', 'name', 'phone_number', 'last_updated', 'created_by'];
+            if (!in_array($orderBy, $validColumns)) {
+                $orderBy = 'last_updated';
+            }
+
+            $orderDir = strtoupper($orderDir) === 'ASC' ? 'ASC' : 'DESC';
+            $query->order($db->quoteName($orderBy) . ' ' . $orderDir);
+
+            // Apply pagination
+            $limit = max(1, (int) $limit);
+            $offset = max(0, (int) $offset);
+            $db->setQuery($query, $offset, $limit);
+
+            // Fetch contacts
+            $contacts = $db->loadAssocList();
+
+            // Load keywords information for each contact
+            if (!empty($contacts)) {
+                foreach ($contacts as &$contact) {
+                    if (!empty($contact['keywords_tags'])) {
+                        $keywordIds = array_filter(explode(',', $contact['keywords_tags']));
+                        if (count($keywordIds) > 0) {
+                            $keywordQuery = $db->getQuery(true)
+                                ->select($db->quoteName(['id', 'name']))
+                                ->from($db->quoteName('#__dt_whatsapp_tenants_keywords'))
+                                ->where($db->quoteName('id') . ' IN (' . implode(',', $keywordIds) . ')');
+                            $db->setQuery($keywordQuery);
+                            $contact['keywords'] = $db->loadAssocList();
+                        } else {
+                            $contact['keywords'] = [];
+                        }
+                    } else {
+                        $contact['keywords'] = [];
+                    }
+                }
+            }
+
+            return [
+                'items' => $contacts,
+                'total' => $totalCount
+            ];
+        } catch (\Exception $e) {
+            return [
+                'items' => [],
+                'total' => 0,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
 
     /**
      * Process incoming webhook events, log them, forward the payload to an external URL,
@@ -398,27 +498,27 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                     $result['data'] = ['from' => $from, 'text' => $text];
 
                     $contact = null;
-                    
+
                     // Extract contact info from the parsed value
                     $contactInfo = null;
                     if (isset($value['contacts']) && is_array($value['contacts']) && !empty($value['contacts'])) {
                         $contactInfo = $value['contacts'][0] ?? null;
                     }
-                    
+
                     try {
                         $db = Factory::getDbo();
                         $normalizedFrom = ltrim($from, '+');
-                        
+
                         // Check if contact exists
                         $query = $db->getQuery(true)
                             ->select($db->quoteName(['id', 'name', 'keywords_tags', 'phone_number']))
                             ->from($db->quoteName('#__dt_whatsapp_tenants_contacts'))
                             ->where('REPLACE(' . $db->quoteName('phone_number') . ", '+', '' ) = " . $db->quote($normalizedFrom));
                         $contact = $db->setQuery($query)->loadAssoc();
-                        
+
                         $result['logs']['contact'] = [];
                         $result['logs']['contact'][] = 'Looking up contact with number: ' . $normalizedFrom;
-                        
+
                         if ($contact) {
                             $result['logs']['contact'][] = 'Found existing contact: ' . ($contact['name'] ?? 'unnamed');
                             // Update existing contact if we have new info from the payload
@@ -430,7 +530,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                                         ->set($db->quoteName('last_updated') . ' = ' . $db->quote(date('Y-m-d H:i:s')))
                                         ->where($db->quoteName('id') . ' = ' . $db->quote($contact['id']))
                                 )->execute();
-                                
+
                                 // Update name in current contact data
                                 $contact['name'] = $contactInfo['profile']['name'];
                                 $result['logs']['contact'][] = 'Updated contact name to: ' . $contactInfo['profile']['name'];
@@ -439,7 +539,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                             $result['logs']['contact'][] = 'Creating new contact: ' . $contactInfo['profile']['name'];
                             // Insert new contact
                             $uid = Factory::getApplication()->input->get('uid', '', 'STRING');
-                            
+
                             $insertQuery = $db->getQuery(true)
                                 ->insert($db->quoteName('#__dt_whatsapp_tenants_contacts'))
                                 ->columns($db->quoteName(['name', 'phone_number', 'created_by', 'last_updated']))
@@ -450,7 +550,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                                     $db->quote(date('Y-m-d H:i:s'))
                                 ]));
                             $db->setQuery($insertQuery)->execute();
-                            
+
                             // Get the newly inserted contact ID
                             $contact = [
                                 'id' => $db->insertid(),
@@ -476,7 +576,7 @@ class WhatsAppWebhook extends CMSPlugin implements SubscriberInterface
                         } else {
                             $keywordsResult = $this->updateContactKeywordsIfMatched($contact, $uid, $text);
                             $result['logs']['keywords'] = $keywordsResult['logs'] ?? [];
-                            
+
                             $secret = $config['dreamztrack_key'] ?? '';
                             $env = strtoupper($config['dreamztrack_endpoint'] ?? 'DEVELOPMENT');
                             $endpoint = ($env === 'PRODUCTION')

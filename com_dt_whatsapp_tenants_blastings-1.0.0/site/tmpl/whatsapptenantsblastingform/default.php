@@ -319,7 +319,7 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 				value="<?php echo isset($this->item->state) ? $this->item->state : ''; ?>" />
 			<?php echo $this->form->getInput('created_by'); ?>
 			<?php echo $this->form->getInput('modified_by'); ?>
-			
+
 
 			<!-- Hidden file input for Excel file -->
 			<input type="file" id="excelFile" style="display:none" accept=".xlsx,.xls">
@@ -346,11 +346,13 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 			<!-- Step 2: Excel Import -->
 			<div class="form-step step2">
 				<div class="row">
-					<div class="col-md-5"></div>
-					<div class="col-md-2"><!-- or --></div>
-					<div class="col-md-5" style="margin-bottom: 10px;">
-						<a href="#" class="btn-step" id="btn-get-contact">Import Excel <span
+					<div class="col-md-12" style="margin-bottom: 10px;">
+						<a href="#" class="btn-step" id="btn-get-contact">Upload Excel File <span
 								id="btn-get-contact-text"></span></a>
+						<a href="#" class="btn-step" id="btn-import-contacts">Load Contacts <span
+								id="btn-import-contacts-text"></span></a>
+						<a href="#" class="btn-step" id="btn-export-contacts">Export to Excel <span
+								id="btn-export-contacts-text"></span></a>
 					</div>
 				</div>
 				<div class="row">
@@ -547,6 +549,105 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 			$('#excelFile').click();
 		});
 
+		// Add Import Contacts button functionality
+		$('#btn-import-contacts').click(function (e) {
+			e.preventDefault();
+			var $btn = $(this);
+			$btn.find('#btn-import-contacts-text').html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+
+			$.ajax({
+				url: 'index.php?option=com_ajax&plugin=whatsappwebhook&format=json&method=getContacts',
+				type: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					$btn.find('#btn-import-contacts-text').html('');
+
+					if (response.success && response.data && response.data.length > 0 && response.data[0].items) {
+						contacts = []; // Reset contacts array
+
+						// Process contact data from response
+						response.data[0].items.forEach(function (contact) {
+							contacts.push({
+								phone: String(contact.phone_number),
+								name: String(contact.name)
+							});
+						});
+
+						// Build DataTable data from contacts array
+						var tableData = contacts.map(function (contact) {
+							return [
+								'<input type="checkbox" class="select-phone" value="' + contact.phone + '">',
+								contact.phone,
+								contact.name
+							];
+						});
+
+						// If DataTable exists, destroy and reinitialize
+						if ($.fn.DataTable.isDataTable('#excelDataTable')) {
+							$('#excelDataTable').DataTable().clear().destroy();
+						}
+
+						var table = $('#excelDataTable').DataTable({
+							data: tableData,
+							columns: [
+								{ title: '<input type="checkbox" id="select-all">', orderable: false },
+								{ title: "Phone Numbers" },
+								{ title: "Name" }
+							],
+							searching: true,
+							paging: true,
+							ordering: true
+						});
+
+						// Show table container and adjust columns
+						$('#tableContainer').show();
+						table.columns.adjust().draw();
+
+						// "Select all" functionality in header
+						$('#select-all').on('click', function () {
+							var rows = table.rows({ 'search': 'applied' }).nodes();
+							$('input[type="checkbox"].select-phone', rows).prop('checked', this.checked);
+						});
+					} else {
+						alert("No contacts found or error in response.");
+					}
+				},
+				error: function () {
+					$btn.find('#btn-import-contacts-text').html('');
+					alert("Error fetching contacts. Please try again.");
+				}
+			});
+		});
+
+		// Add Download Template button functionality
+		$('#btn-download-template').click(function (e) {
+			e.preventDefault();
+
+			// Create workbook with a single sheet
+			var wb = XLSX.utils.book_new();
+
+			// Define headers for the template
+			var headers = [["Phone Number", "Name"]];
+
+			// Add some example data rows
+			var exampleData = [
+				["60123456789", "Example Name 1"],
+				["60198765432", "Example Name 2"]
+			];
+
+			// Combine headers with example data
+			var wsData = headers.concat(exampleData);
+
+			// Create worksheet
+			var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+			// Add worksheet to workbook
+			XLSX.utils.book_append_sheet(wb, ws, "Contacts Template");
+
+			// Generate Excel file and trigger download
+			XLSX.writeFile(wb, "whatsapp_contacts_template.xlsx");
+		});
+
 		$('#excelFile').change(function (e) {
 			var file = e.target.files[0];
 			if (file) {
@@ -644,6 +745,60 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 			);
 			// Submit form
 			$('#form-whatsapptenantsblasting').submit();
+		});
+
+		// Add Export Contacts button functionality
+		$('#btn-export-contacts').click(function (e) {
+			e.preventDefault();
+			var $btn = $(this);
+			$btn.find('#btn-export-contacts-text').html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+
+			$.ajax({
+				url: 'index.php?option=com_ajax&plugin=whatsappwebhook&format=json&method=getContacts',
+				type: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					$btn.find('#btn-export-contacts-text').html('');
+
+					if (response.success && response.data && response.data.length > 0 && response.data[0].items) {
+						contacts = []; // Reset contacts array
+
+						// Process contact data from response
+						response.data[0].items.forEach(function (contact) {
+							contacts.push({
+								phone: String(contact.phone_number),
+								name: String(contact.name)
+							});
+						});
+
+						// Create workbook with a single sheet
+						var wb = XLSX.utils.book_new();
+
+						// Define headers for the export
+						var headers = [["Phone Number", "Name"]];
+
+						// Combine headers with contacts data
+						var wsData = headers.concat(contacts.map(function (contact) {
+							return [contact.phone, contact.name];
+						}));
+
+						// Create worksheet
+						var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+						// Add worksheet to workbook
+						XLSX.utils.book_append_sheet(wb, ws, "Exported Contacts");
+
+						// Generate Excel file and trigger download
+						XLSX.writeFile(wb, "exported_contacts.xlsx");
+					} else {
+						alert("No contacts found or error in response.");
+					}
+				},
+				error: function () {
+					$btn.find('#btn-export-contacts-text').html('');
+					alert("Error fetching contacts. Please try again.");
+				}
+			});
 		});
 	});
 
