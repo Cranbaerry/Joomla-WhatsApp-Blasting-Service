@@ -351,7 +351,7 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 								id="btn-get-contact-text"></span></a>
 						<a href="#" class="btn-step" id="btn-import-contacts">Load Contacts <span
 								id="btn-import-contacts-text"></span></a>
-						<a href="#" class="btn-step" id="btn-export-contacts">Export to Excel <span
+						<a href="#" class="btn-step" id="btn-export-contacts">Download Excel Template <span
 								id="btn-export-contacts-text"></span></a>
 					</div>
 				</div>
@@ -596,7 +596,8 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 							],
 							searching: true,
 							paging: true,
-							ordering: true
+							ordering: true,
+							lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]]
 						});
 
 						// Show table container and adjust columns
@@ -701,7 +702,8 @@ $canEdit = Dt_whatsapp_tenants_blastingsHelper::canUserEdit($this->item, $user);
 						],
 						searching: true,
 						paging: true,
-						ordering: true
+						ordering: true,
+						lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]]
 					});
 
 					// Show table container and adjust columns

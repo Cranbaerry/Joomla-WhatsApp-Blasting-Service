@@ -36,6 +36,7 @@ $canDelete = $user->authorise('core.delete', 'com_dt_whatsapp_tenants_blastings'
 $wa = $this->document->getWebAssetManager();
 $wa->useStyle('com_dt_whatsapp_tenants_blastings.list');
 ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <?php if ($this->params->get('show_page_heading')): ?>
 	<div class="page-header">
@@ -53,7 +54,8 @@ $wa->useStyle('com_dt_whatsapp_tenants_blastings.list');
 			<?php echo Text::_('COM_DT_WHATSAPP_TENANTS_BLASTINGS_ADD_ITEM'); ?></a>
 	<?php endif; ?>
 
-
+	<a href="#" class="btn btn-primary btn-small" id="btn-export-contacts">Export Contacts <span
+			id="btn-export-contacts-text"></span></a>
 	<div class="table-responsive">
 		<table class="table table-striped" id="whatsapptenantscontactList">
 			<thead>
@@ -165,3 +167,58 @@ if ($canDelete) {
 		", [], [], ["jquery"]);
 }
 ?>
+<script>
+	// Add Export Contacts button functionality
+	$('#btn-export-contacts').click(function (e) {
+		e.preventDefault();
+		var $btn = $(this);
+		$btn.find('#btn-export-contacts-text').html('<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div>');
+
+		$.ajax({
+			url: 'index.php?option=com_ajax&plugin=whatsappwebhook&format=json&method=getContacts',
+			type: 'GET',
+			dataType: 'json',
+			success: function (response) {
+				$btn.find('#btn-export-contacts-text').html('');
+
+				if (response.success && response.data && response.data.length > 0 && response.data[0].items) {
+					contacts = []; // Reset contacts array
+
+					// Process contact data from response
+					response.data[0].items.forEach(function (contact) {
+						contacts.push({
+							phone: String(contact.phone_number),
+							name: String(contact.name)
+						});
+					});
+
+					// Create workbook with a single sheet
+					var wb = XLSX.utils.book_new();
+
+					// Define headers for the export
+					var headers = [["Phone Number", "Name"]];
+
+					// Combine headers with contacts data
+					var wsData = headers.concat(contacts.map(function (contact) {
+						return [contact.phone, contact.name];
+					}));
+
+					// Create worksheet
+					var ws = XLSX.utils.aoa_to_sheet(wsData);
+
+					// Add worksheet to workbook
+					XLSX.utils.book_append_sheet(wb, ws, "Exported Contacts");
+
+					// Generate Excel file and trigger download
+					XLSX.writeFile(wb, "exported_contacts.xlsx");
+				} else {
+					alert("No contacts found or error in response.");
+				}
+			},
+			error: function () {
+				$btn.find('#btn-export-contacts-text').html('');
+				alert("Error fetching contacts. Please try again.");
+			}
+		});
+	});
+</script>
