@@ -120,5 +120,6 @@ $canEdit = Dt_whatsapp_tenants_templatesHelper::canUserEdit($this->item, $user);
 <script>
 	$(document).ready(function () {
 		$('#jform_name').after('<div class="name_template_info">The message template name can only have lower-case letters and underscores.</div>');
+		$('#jform_name, .name_template_info').wrapAll('<div class="lyn_smelly_dumdum"></div>');
 	});
 </script>
